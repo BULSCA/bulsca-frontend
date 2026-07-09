@@ -1,0 +1,71 @@
+
+.header{
+  margin-bottom: 0.5rem;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 600;
+  --tw-text-opacity: 1;
+  color: rgb(7 6 96 / var(--tw-text-opacity, 1));
+}
+.header.header-large{
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+.header.header-larger{
+  font-size: 3rem;
+  line-height: 1;
+}
+.header.header-small{
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+.header.header-smallish{
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+.header.header-bold{
+  font-weight: 700;
+}
+.header.header-white{
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
+h1, h2, h3, h4, h5{
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  --tw-text-opacity: 1;
+  color: rgb(7 6 96 / var(--tw-text-opacity, 1));
+}
+h1.h-feature, h2.h-feature, h3.h-feature, h4.h-feature, h5.h-feature{
+  font-size: 6rem;
+  line-height: 1;
+}
+h1.hmb-0, h2.hmb-0, h3.hmb-0, h4.hmb-0, h5.hmb-0{
+  margin-bottom: 0px;
+}
+
+h1:not(.header){
+  font-size: 3rem;
+  line-height: 1;
+}
+
+h2:not(.header){
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+h3:not(.header){
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+h4:not(.header){
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+h5:not(.header){
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}

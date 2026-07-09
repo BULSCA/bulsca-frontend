@@ -36,9 +36,7 @@ const social = props.socialLinks ?? defaultSocial
   <div class="bg-bulsca-blue">
     <div class="w-full container-responsive">
       <div class="flex flex-col md:flex-row gap-8 items-stretch md:items-start mx-2">
-        <div class="md:flex-[2] p-6">
-          <MailingList :action="props.mailingAction" :placeholder="props.mailingPlaceholder" />
-        </div>
+        <MailingList :action="props.mailingAction" :placeholder="props.mailingPlaceholder" class="md:flex-[2]" />
         <div class="flex flex-col items-center justify-center md:flex-[1] flex-1 border-0 text-center">
           <QuickLinks :links="quick" />
           <SocialLinks :links="social" />
