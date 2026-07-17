@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import DashboardView from '@/views/DashboardView.vue'
 
 
 const router = createRouter({
@@ -20,10 +19,16 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
     {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: DashboardView,
+      path: '/landing',
+      name: 'landing',
+      component: () => import('../views/LandingView.vue'),
     },
+    {
+      path: '/latest',
+      name: 'latest',
+      component: () => import('../views/LatestView.vue'),
+    },
+
   ],
 })
 
