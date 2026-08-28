@@ -1,6 +1,8 @@
 @theme {
-  --color-bulsca-blue: 7 6 96;
-  --color-bulsca-red: 158 13 6;
+  --color-bulsca-blue: #070660;
+  --color-bulsca-red: #9e0d06;
+  --color-bulsca_blue: #070660;
+  --color-bulsca_red: #9e0d06;
 }
 
 /* color palette from <https://github.com/vuejs/theme> */
@@ -26,8 +28,8 @@
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
 
   /* bulsca custom colours */
-  --vt-c-bulsca-blue: rgba(7, 6, 96, 1);
-  --vt-c-bulsca-red: rgba(158, 13, 6, 1);
+  --vt-c-bulsca-blue: #070660;
+  --vt-c-bulsca-red: #9e0d06;
 }
 
 /* semantic color variables for this project */
@@ -46,6 +48,8 @@
   --color-accent: var(--vt-c-bulsca-red);
   --color-bulsca-blue: var(--vt-c-bulsca-blue);
   --color-bulsca-red: var(--vt-c-bulsca-red);
+  --color-bulsca_blue: var(--vt-c-bulsca-blue);
+  --color-bulsca_red: var(--vt-c-bulsca-red);
 
   --section-gap: 160px;
 }
@@ -69,7 +73,6 @@
 *::after {
   box-sizing: border-box;
   margin: 0;
-  font-weight: normal;
 }
 
 html {
