@@ -1,33 +1,33 @@
-// src/composables/useApi.ts
-import { ref, type Ref } from 'vue'
-import type { AxiosResponse } from 'axios'
-import type { ApiResponse } from '@/api/types'
+import { getCurrentScope, onScopeDispose, shallowRef, ref } from 'vue'
+import { normalizeFailure, type ApiFailure } from '@/api/errors'
 
-export function useApi<T, Args extends unknown[] = unknown[]>(
-  requestFn: (...args: Args) => Promise<AxiosResponse<ApiResponse<T> | T>>,
-) {
-  const data = ref<T | null>(null) as Ref<T | null>
-  const error = ref<string | null>(null)
+export function useApi<T, Args extends unknown[]>(request: (signal: AbortSignal, ...args: Args) => Promise<T>) {
+  const data = shallowRef<T | null>(null)
+  const error = shallowRef<ApiFailure | null>(null)
   const loading = ref(false)
-
-  async function execute(...args: Args) {
+  let controller: AbortController | undefined
+  let sequence = 0
+  function cancel() { sequence++; controller?.abort(); loading.value = false }
+  function clear() { cancel(); data.value = null; error.value = null }
+  async function execute(...args: Args): Promise<boolean> {
+    controller?.abort()
+    const active = new AbortController()
+    controller = active
+    const current = ++sequence
     loading.value = true
     error.value = null
     try {
-      const response = await requestFn(...args)
-      const resData = response.data as ApiResponse<T> | T
-      if (resData && typeof resData === 'object' && 'data' in resData) {
-        data.value = (resData as ApiResponse<T>).data
-      } else {
-        data.value = resData as T
-      }
-    } catch (err: unknown) {
-      const axiosErr = err as { response?: { data?: { message?: string } } }
-      error.value = axiosErr.response?.data?.message ?? 'Could not reach the server.'
+      const result = await request(active.signal, ...args)
+      if (current !== sequence) return false
+      data.value = result
+      return true
+    } catch (failure) {
+      if (current === sequence && !active.signal.aborted) error.value = normalizeFailure(failure)
+      return false
     } finally {
-      loading.value = false
+      if (current === sequence) loading.value = false
     }
   }
-
-  return { data, error, loading, execute }
+  if (getCurrentScope()) onScopeDispose(cancel)
+  return { data, error, loading, execute, clear }
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SocialItem } from '@/types/footer'
 
-const props = defineProps<{
+defineProps<{
   links: SocialItem[]
 }>()
 </script>

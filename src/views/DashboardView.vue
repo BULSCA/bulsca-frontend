@@ -3,7 +3,10 @@ import { onMounted } from 'vue'
 import { useApi } from '@/composables/useApi'
 import { getAssets } from '@/api/assets'
 
-const { data: assets, error, loading, execute } = useApi(getAssets)
+const { data: assets, error, loading, execute } = useApi(async (signal: AbortSignal) => {
+  signal.throwIfAborted()
+  return (await getAssets()).data.data
+})
 
 onMounted(execute)
 </script>
@@ -13,7 +16,7 @@ onMounted(execute)
     <div v-if="loading">Loading assets…</div>
 
     <div v-else-if="error" class="error-state">
-      <p>{{ error }}</p>
+      <p>{{ error.message }}</p>
       <button @click="execute">Retry</button>
     </div>
 

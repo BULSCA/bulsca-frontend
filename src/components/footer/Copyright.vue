@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({ name: 'SiteCopyright' })
 const props = defineProps<{
   year?: number
 }>()

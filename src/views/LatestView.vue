@@ -1,79 +1,43 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useApi } from '@/composables/useApi'
 import { getArticles } from '@/api/articles/articles'
+import type { Tag } from '@/api/articles/types'
 import PageBanner from '@/components/PageBanner.vue'
 import ArticlePreviewCard from '@/components/articles/ArticlePreviewCard.vue'
 import ArticleSkeleton from '@/components/articles/ArticleSkeleton.vue'
 import ArticleEmpty from '@/components/articles/ArticleEmpty.vue'
-import { isArticlePinned } from '@/composables/useArticleFormatting'
-
-const { data: articles, error, loading, execute } = useApi(getArticles)
-
-onMounted(execute)
-
-const pinnedArticles = computed(() => {
-  if (!articles.value) return []
-  return articles.value.filter(a => isArticlePinned(a))
+import RequestError from '@/components/RequestError.vue'
+const route = useRoute()
+const router = useRouter()
+const page = computed(() => {
+  const value = Number(route.query.page)
+  return Number.isSafeInteger(value) && value > 0 ? value : 1
 })
-
-const regularArticles = computed(() => {
-  if (!articles.value) return []
-  return articles.value.filter(a => !isArticlePinned(a))
-})
+const tag = computed(() => typeof route.query.tag === 'string' ? route.query.tag : '')
+const { data, error, loading, execute } = useApi(getArticles)
+const load = () => execute(page.value, tag.value)
+watch([page, tag], load, { immediate: true })
+function selectTag(value: Tag) { void router.push({ path: '/latest', query: { tag: value.slug } }) }
+function pageQuery(value: number) { return { ...route.query, page: String(value) } }
 </script>
-
 <template>
-  <PageBanner
-    title="Latest"
-    subtitle="News 📰"
-    background-image="https://bulsca.co.uk/storage/photos/DSC_0335.jpg"
-    :snow-container="true"
-    height="h-[40vh]"
-  />
-
-  <div class="container-responsive">
-    <!-- Loading State with Skeletons -->
-    <div v-if="loading" class="flex flex-col">
-      <ArticleSkeleton v-for="n in 3" :key="n" />
-    </div>
-
-    <!-- Error State -->
-    <div v-else-if="error" class="py-8 text-center">
-      <div class="bg-red-50 border border-bulsca-red/30 rounded-lg p-6 max-w-lg mx-auto">
-        <p class="text-bulsca-red font-medium mb-3">{{ error }}</p>
-        <button
-          @click="execute"
-          class="px-4 py-2 bg-bulsca-blue text-white rounded font-medium hover:bg-bulsca-blue/90 transition-colors"
-        >
-          Retry
-        </button>
-      </div>
-    </div>
-
-    <!-- Empty State -->
-    <ArticleEmpty v-else-if="!articles?.length" />
-
-    <!-- Articles List -->
-    <div v-else class="flex flex-col pb-8">
-      <!-- Pinned Articles Section -->
-      <div v-if="pinnedArticles.length > 0" class="flex flex-col">
-        <ArticlePreviewCard
-          v-for="article in pinnedArticles"
-          :key="'pinned-' + article.id"
-          :article="article"
-        />
-      </div>
-
-      <!-- Regular Articles Section -->
-      <div class="flex flex-col">
-        <ArticlePreviewCard
-          v-for="article in regularArticles"
-          :key="article.id"
-          :article="article"
-        />
-      </div>
-    </div>
-  </div>
+  <PageBanner title="Latest" subtitle="News" background-image="/storage/photos/DSC_0335.jpg" />
+  <main class="container-responsive" :aria-busy="loading">
+    <p v-if="tag" class="my-4">Tag: {{ tag }} <RouterLink to="/latest">Clear filter</RouterLink></p>
+    <RequestError v-if="error" :error="error" :stale="!!data" :busy="loading" @retry="load" />
+    <p v-if="error && data">Previous results may not reflect your latest filter or page selection.</p>
+    <div v-if="loading && !data" role="status" aria-label="Loading news"><ArticleSkeleton v-for="n in 3" :key="n" /></div>
+    <template v-if="data">
+      <ArticleEmpty v-if="!data.data.pinned.length && !data.data.articles.length" />
+      <ArticlePreviewCard v-for="article in data.data.pinned" :key="`pinned-${article.id}`" :article="article" @select-tag="selectTag" />
+      <ArticlePreviewCard v-for="article in data.data.articles" :key="article.id" :article="article" @select-tag="selectTag" />
+      <nav v-if="data.meta.last_page > 1" aria-label="News pages" class="my-6 flex items-center gap-6">
+        <RouterLink v-if="data.meta.current_page > 1" :to="{ path: '/latest', query: pageQuery(data.meta.current_page - 1) }">Previous</RouterLink>
+        <span>Page {{ data.meta.current_page }} of {{ data.meta.last_page }}</span>
+        <RouterLink v-if="data.meta.current_page < data.meta.last_page" :to="{ path: '/latest', query: pageQuery(data.meta.current_page + 1) }">Next</RouterLink>
+      </nav>
+    </template>
+  </main>
 </template>
-

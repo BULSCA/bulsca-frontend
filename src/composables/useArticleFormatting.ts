@@ -11,7 +11,9 @@ export function formatDateAuthor(createdAt?: string | Date | null, author?: stri
   }
 
 
-  return `Created on ${createdAt} by ${authorName}`
+  const date = createdAt instanceof Date ? createdAt : new Date(createdAt)
+  if (!Number.isFinite(date.getTime())) return `Created by ${authorName}`
+  return `Created on ${new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London' }).format(date)} by ${authorName}`
 }
 
 /**
@@ -31,7 +33,7 @@ export function formatViews(views?: number | null): string {
  * Handles spacing before tags and generous word count (~80 words).
  */
 export function getExcerpt(content?: string | null, excerpt?: string | null, maxWords = 80): string {
-  const rawText = content || excerpt
+  const rawText = excerpt || content
   if (!rawText) {
     return ''
   }
@@ -63,4 +65,3 @@ export function getExcerpt(content?: string | null, excerpt?: string | null, max
 export function isArticlePinned(article: Article | Partial<Article> | { pinned?: boolean | number }): boolean {
   return Boolean(article.pinned)
 }
-

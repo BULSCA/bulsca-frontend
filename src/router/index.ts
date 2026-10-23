@@ -29,6 +29,10 @@ const router = createRouter({
       component: () => import('../views/LatestView.vue'),
     },
 
+    { path: '/article/:slug', name: 'article', component: () => import('../views/ArticleView.vue') },
+    { path: '/articles/tag/:tag', redirect: to => ({ path: '/latest', query: { tag: String(to.params.tag) } }) },
+    { path: '/articles/:slug', redirect: to => ({ name: 'article', params: { slug: to.params.slug } }) },
+    { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('../views/NotFoundView.vue') },
   ],
 })
 

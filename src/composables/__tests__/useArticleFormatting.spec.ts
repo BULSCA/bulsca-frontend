@@ -16,6 +16,11 @@ describe('useArticleFormatting', () => {
     expect(formatViews(1500000)).toBe('1.5M')
   })
 
+  it('uses the London calendar day and handles invalid dates safely', () => {
+    expect(formatDateAuthor('2026-06-01T23:30:00Z', 'Alex')).toBe('Created on 02/06/2026 by Alex')
+    expect(formatDateAuthor('invalid', null)).toBe('Created by BULSCA')
+  })
+
   it('generates clean plain-text excerpts without HTML tags', () => {
     const html = '<p>Hello <strong>world</strong> &amp; friends! <a href="#">Link</a></p>'
     expect(getExcerpt(html)).toBe('Hello world & friends! Link')

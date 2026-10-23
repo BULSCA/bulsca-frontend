@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({ name: 'SiteFooter' })
 import MailingList from './footer/MailingList.vue'
 import QuickLinks from './footer/QuickLinks.vue'
 import SocialLinks from './footer/SocialLinks.vue'
