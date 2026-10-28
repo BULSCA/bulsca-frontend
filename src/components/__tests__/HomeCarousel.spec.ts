@@ -97,6 +97,18 @@ describe('accessible homepage carousel', () => {
     await vi.advanceTimersByTimeAsync(6000)
     expect(activeId()).toBe('brand-clubs')
   })
+  it('honours explicit Play while the button retains focus and still pauses during hover', async () => {
+    show()
+    await wrapper.trigger('focusin')
+    await button('Next slide').trigger('click')
+    await wrapper.trigger('mouseenter')
+    await button('Play slideshow').trigger('click')
+    await vi.advanceTimersByTimeAsync(6000)
+    expect(activeId()).toBe('brand-clubs')
+    await wrapper.trigger('mouseleave')
+    await vi.advanceTimersByTimeAsync(6000)
+    expect(activeId()).toBe('brand-swimmer')
+  })
   it('pauses while the document is hidden', async () => {
     show()
     vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('hidden')

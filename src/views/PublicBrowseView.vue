@@ -80,7 +80,8 @@ onBeforeUnmount(() => clearTimeout(timer))
       <ContentSections :sections="document.sections" />
       <PublicTable v-if="document.table" :table="document.table" />
       <nav v-if="document.links?.length" class="quick-links" aria-label="Useful links"><SafeLink v-for="link in document.links" :key="link.url" :to="link.url">{{ link.label }}</SafeLink></nav>
-      <section v-if="document.entries?.length" class="content-section"><h2>Explore more</h2><PublicCards :entries="document.entries" /></section>
+      <section v-if="document.entries?.length" class="content-section"><h2>{{ definition.endpoint === 'committee' ? 'Meet your committee' : 'Explore more' }}</h2><p v-if="definition.endpoint === 'committee'">Select a committee member to view their profile and learn about their role within BULSCA.</p><PublicCards :entries="document.entries" /></section>
+      <section v-if="definition.endpoint === 'committee'" class="content-section reading-copy"><h2>About the committee</h2><p>The BULSCA committee is made up entirely of volunteers, either current students or graduates from higher education institutions.</p><RouterLink to="/get-involved/previous-committees" class="action-button">Previous committees</RouterLink></section>
       <DocumentAccess v-if="document.downloadable && definition.endpoint === 'resource'" :id="String(document.id)" />
     </article>
   </PageLayout>

@@ -27,8 +27,12 @@ export function previewResponse(endpoint: string, params: Record<string, string>
   switch (endpoint) {
     case 'presentation': return { data: previewPresentation }
     case 'club': item = data.document(find(data.clubs, params.slug!), { entries: data.competitions, links: [{ label: 'Contact this sample club', url: '/contact-form?department=recruitment' }] }); break
-    case 'committee': item = data.document(find(data.committees, season), { entries: data.members(season) }); break
-    case 'member': find(data.committees, season); item = data.document(find(data.members(season), params.slug!), { links: [{ label: 'Contact the committee', url: '/contact' }] }); break
+    case 'committee': item = data.document(find(data.committees, season), { sections: [], entries: data.members(season) }); break
+    case 'member': find(data.committees, season); item = data.document(find(data.members(season), params.slug!), {
+      sections: [{ heading: '', paragraphs: ['This is a fictional committee profile for exploring the website. Real member biographies will be supplied by the public API.'] }],
+      role_sections: [{ heading: 'About this sample role', paragraphs: ['This sample demonstrates where the published role description will appear. It is not a statement about a real committee member.'] }],
+      links: [{ label: 'Contact the committee', url: '/contact' }],
+    }); break
     case 'competition': item = data.document(find(data.competitions, params.slug!), { entries: data.resources, links: [{ label: 'League standings', url: '/competitions/league' }, { label: 'Scoring.events', url: 'https://scoring.events' }] }); break
     case 'championship': item = data.document(find(data.championships, params.year!), { entries: data.resources }); break
     case 'league': item = data.document(find(data.seasons, season), { entries: data.competitions,

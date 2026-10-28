@@ -5,7 +5,7 @@ const StaticPage = () => import('@/views/StaticPageView.vue')
 const BrowsePage = () => import('@/views/PublicBrowseView.vue')
 const PortalPage = () => import('@/views/PortalView.vue')
 const staticRoute = (path: string, name: string, content: string): RouteRecordRaw => ({ path, name, component: StaticPage, meta: { content, title: pages[content]!.title } })
-const browseRoute = (path: string, name: string, browse: string): RouteRecordRaw => ({ path, name, component: BrowsePage, meta: { browse, title: browsePages[browse]!.title } })
+const browseRoute = (path: string, name: string, browse: string): RouteRecordRaw => ({ path, name, component: browse === 'member' ? () => import('@/views/CommitteeMemberView.vue') : BrowsePage, meta: { browse, title: browsePages[browse]!.title } })
 const handoff = (path: string, name: string): RouteRecordRaw => ({ path, name, component: PortalPage, meta: { title: 'Member and management portal' } })
 export const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: () => import('@/views/HomeView.vue'), meta: { title: pages.home!.title } }, staticRoute('/about', 'about', 'about'),

@@ -16,6 +16,8 @@ export interface PublicEntry {
   tags?: string[]
   links?: PublicLink[]
   results_link?: PublicLink
+  role_label?: string
+  role_order?: number
 }
 export interface PublicDocument extends PublicEntry {
   sections: ContentSection[]
@@ -23,6 +25,7 @@ export interface PublicDocument extends PublicEntry {
   table?: ContentTable
   links?: PublicLink[]
   downloadable?: boolean
+  role_sections?: ContentSection[]
 }
 export interface PublicCollection {
   data: PublicEntry[]

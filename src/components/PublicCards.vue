@@ -7,6 +7,7 @@ import CompetitionCard from './CompetitionCard.vue'
 import NavigationTile from './NavigationTile.vue'
 import { computed } from 'vue'
 import { publicImageUrl } from '@/api/presentation'
+import CommitteeProfiles from './CommitteeProfiles.vue'
 const props = defineProps<{ entries: PublicEntry[] }>()
 const tiled = computed(
   () =>
@@ -20,7 +21,8 @@ function hideImage(event: Event) {
 }
 </script>
 <template>
-  <div :class="tiled ? 'navigation-tiles' : 'public-grid'">
+  <CommitteeProfiles v-if="entries.length && entries.every(item => item.kind === 'members')" :members="entries" />
+  <div v-else :class="tiled ? 'navigation-tiles' : 'public-grid'">
     <template v-for="item in entries" :key="`${item.kind}-${item.id}`">
       <NavigationTile
         v-if="tiled"

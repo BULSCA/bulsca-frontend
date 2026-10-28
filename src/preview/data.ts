@@ -13,8 +13,8 @@ export const competitions = [
 export const seasons = ['2026-27', '2025-26'].map(slug => entry('seasons', slug, `League ${slug}`, 'Sample season with competition results and standings.'))
 export const committees = ['2026-27', '2025-26'].map(slug => entry('committees', slug, `Committee ${slug}`, 'Fictional members demonstrating committee and profile pages.'))
 export const members = (season: string) => [
-  entry('members', 'alex-example.1', 'Alex Example', 'Sample Chair — helping coordinate university lifesaving.', { parent: season, tags: ['Chair'] }),
-  entry('members', 'sam-sample.2', 'Sam Sample', 'Sample Welfare and Inclusion Officer.', { parent: season, tags: ['Welfare and Inclusion Officer'] }),
+  entry('members', 'alex-example.1', 'Alex Example', 'Sample Chair — helping coordinate university lifesaving.', { parent: season, tags: ['Chair'], role_label: 'Chair', role_order: 0 }),
+  entry('members', 'sam-sample.2', 'Sam Sample', 'Sample Welfare and Inclusion Officer.', { parent: season, tags: ['Welfare and Inclusion Officer'], role_label: 'Welfare and Inclusion Officer', role_order: 1 }),
 ]
 export const resourcePages = [
   entry('resource-pages', 'competition-documents', 'Competition documents', 'Entry packs, event guidance and results.'),

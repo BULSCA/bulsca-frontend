@@ -78,6 +78,13 @@ describe('public API contracts and consumers', () => {
     expect(results.data[1]?.results_link?.url).toBe('/resources/view/sample-entry-pack')
     expect(isCollection({ data: [], meta: { current_page: 1, last_page: 1, total: 0 } })).toBe(true)
   })
+  it('validates committee roles and biography sections without requiring new fields on older responses', () => {
+    const member = { id: 1, slug: 'alex.1', title: 'Alex Example', kind: 'members', sections: [] }
+    expect(isDocumentResponse({ data: member })).toBe(true)
+    expect(isDocumentResponse({ data: { ...member, role_label: 'Chair', role_order: 0, role_sections: [{ heading: 'Responsibilities', paragraphs: ['Role details.'] }] } })).toBe(true)
+    expect(isDocumentResponse({ data: { ...member, role_order: -1 } })).toBe(false)
+    expect(isDocumentResponse({ data: { ...member, role_sections: '<script>x</script>' } })).toBe(false)
+  })
   it('does not replay failed writes or accept an unconfirmed success', async () => {
     const post = vi.spyOn(apiClient, 'post').mockResolvedValueOnce({ data: { unexpected: true } })
     await expect(submitContact({ name: 'Test', email: 'test@example.test', department: 'chair', subject: 'Hello', message: 'Message' }, signal())).rejects.toMatchObject({ kind: 'invalid_response' })

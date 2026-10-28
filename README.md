@@ -119,6 +119,12 @@ Use `PageSection` tones `plain`, `soft` or `brand`; `IconTextRow` supports alter
 
 Shared visual tokens and component styles live in `src/assets/css/shared.css`. Use `action-button`, `form-control` and `form-label` for new forms and actions. Avoid styling every link or input beneath a page wrapper: each component owns its colours and spacing so photo tiles, campaign actions and the footer retain their contrast. Footer forms use the same controls, preserve live Mailchimp fields and prevent submissions in preview. Social artwork is bundled with the frontend.
 
+### Committee profiles
+
+Member entries use `CommitteeProfileCard`: a circular portrait, centred name and full-width blue role strip matching the legacy committee pages. The whole card links to the member in its own committee season. `CommitteeProfiles` orders cards by optional nonnegative integer `role_order`, retaining API order for ties/missing ranks. Use `role_label` for the visible role; older responses can still supply the role through the first tag. `image_url` supplies a public portrait URL; missing/broken images fall back to the bundled BULSCA logo and then initials.
+
+Member details use the existing member endpoint and `sections` for structured biography content. Optional `role_sections: ContentSection[]` supplies the role description for the full-width blue section below the biography. Empty bios and role descriptions have explicit fallback text. No arbitrary profile HTML is rendered. Current and historical committee pages share the cards, and a member's Back link returns to that same season. Preview people remain fictional and use the logo rather than attaching real committee photographs to invented names.
+
 ## Verification
 
 ```sh
@@ -130,5 +136,15 @@ node_modules/.bin/vue-tsc --noEmit -p tsconfig.node.json
 ```
 
 Tests mount the full application with memory routing, traverse public routes and preview records, and exercise unavailable services, consumers, contact forms, document access and recovery. They make no calls to real external services. Deployment and production acceptance are separate user-owned checks.
+
+For actual browser acceptance, start `npm run dev:preview` and an isolated Chrome session with remote debugging on `127.0.0.1:9222`, then run `npm run test:browser`. The checker uses Node's built-in Chrome DevTools connection; it needs no browser automation dependency or production build. It visits all public preview routes at 320, 375, 640, 768, 1024 and 1440 pixels, checks rendered geometry and image loading, and exercises mouse/keyboard navigation, carousel playback, profile links, forms, downloads and browser history. Reports and screenshots are written under ignored `node_modules/.cache/bulsca-browser/`.
+
+For example, start the isolated browser in a separate terminal:
+
+```sh
+google-chrome --headless=new --remote-debugging-address=127.0.0.1 --remote-debugging-port=9222 --user-data-dir=/tmp/bulsca-browser-verification about:blank
+```
+
+To verify unavailable live APIs, start a second dev server with `VITE_PUBLIC_DATA_MODE=live npm run dev -- --host 127.0.0.1 --port 5174`, then run `npm run test:browser -- --live`. API responses are intercepted locally to simulate 404/500/503, invalid payloads, recovery and reconnection; telemetry is captured rather than sent to a backend. The runner accepts loopback origins only and does not submit live forms. Run preview and live checks sequentially so each tab retains visibility for carousel tests.
 
 Unknown routes have a dedicated not-found screen. Missing APIs retain page headings, related navigation and recovery messages. Unavailable optional widgets do not hide static content. Legal information that was absent from the source has an explicit unavailable notice instead of invented policy text.

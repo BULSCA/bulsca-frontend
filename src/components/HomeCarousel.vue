@@ -45,6 +45,11 @@ function select(value: number, manual = true) {
   activeId.value = slides.value[(value + slides.value.length) % slides.value.length]!.id
   if (manual) manualPause.value = true
 }
+function toggleRotation() {
+  manualPause.value = !manualPause.value
+  // An explicit Play request takes precedence over the button retaining keyboard focus.
+  if (!manualPause.value) focused.value = false
+}
 watchEffect(() => {
   clearTimeout(rotation)
   const current = index.value
@@ -164,7 +169,7 @@ onBeforeUnmount(() => {
               ? 'Play slideshow'
               : 'Pause slideshow'
         "
-        @click="manualPause = !manualPause"
+        @click="toggleRotation"
       >
         {{ reducedMotion ? 'Manual slides' : manualPause ? 'Play' : 'Pause' }}
       </button>

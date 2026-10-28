@@ -1,6 +1,6 @@
 <template>
   <CardFrame class="article-card">
-    <RouterLink :to="linkTarget" class="no-underline block w-full group text-inherit">
+    <RouterLink :to="linkTarget" class="article-preview-link block w-full group">
       <article class="flex flex-col w-full">
         <!-- Top Title & Pin Row -->
         <div class="flex flex-row items-start justify-between w-full">

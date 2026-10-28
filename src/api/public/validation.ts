@@ -6,7 +6,8 @@ export const isLink = (v: unknown): v is PublicLink => object(v) && typeof v.lab
 export function isEntry(v: unknown): v is PublicEntry {
   return object(v) && (typeof v.id === 'string' || typeof v.id === 'number') && typeof v.slug === 'string'
     && typeof v.title === 'string' && kinds.includes(String(v.kind))
-    && ['summary', 'date', 'location', 'image_url', 'parent'].every(key => v[key] === undefined || typeof v[key] === 'string')
+    && ['summary', 'date', 'location', 'image_url', 'parent', 'role_label'].every(key => v[key] === undefined || typeof v[key] === 'string')
+    && (v.role_order === undefined || (typeof v.role_order === 'number' && Number.isSafeInteger(v.role_order) && v.role_order >= 0))
     && (v.tags === undefined || strings(v.tags)) && (v.links === undefined || (Array.isArray(v.links) && v.links.every(isLink)))
     && (v.results_link === undefined || isLink(v.results_link))
 }
@@ -23,6 +24,7 @@ export function isDocument(v: unknown): v is PublicDocument {
   return isEntry(v) && Array.isArray(sections) && sections.every(isSection)
     && (entries === undefined || (Array.isArray(entries) && entries.every(isEntry)))
     && (table === undefined || isTable(table)) && (downloadable === undefined || typeof downloadable === 'boolean')
+    && (v.role_sections === undefined || (Array.isArray(v.role_sections) && v.role_sections.every(isSection)))
 }
 export function isCollection(v: unknown): v is PublicCollection {
   if (!object(v) || !object(v.meta)) return false
