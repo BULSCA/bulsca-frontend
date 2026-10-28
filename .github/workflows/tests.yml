@@ -20,8 +20,6 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - name: Temporary merge-protection failure probe
-        run: exit 1
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           persist-credentials: false
@@ -38,7 +36,6 @@ jobs:
           node_modules/.bin/vue-tsc --noEmit -p tsconfig.node.json
       - run: npm run lint:check
   frontend-browser:
-    if: ${{ false }}
     name: Frontend browser acceptance
     runs-on: ubuntu-24.04
     timeout-minutes: 15
