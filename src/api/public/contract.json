@@ -2,6 +2,7 @@
   "version": "draft-1",
   "description": "Frontend integration contract, pending implementation by the owning services. Directory responses use PublicCollection; detail responses use DocumentResponse. See types.ts for the validated DTO fields.",
   "endpoints": {
+    "presentation": { "service": "website", "path": "/presentation", "response": "presentation" },
     "highlights": { "service": "competition", "path": "/homepage/highlights", "response": "collection" },
     "social": { "service": "website", "path": "/social/posts", "response": "collection" },
     "clubs": { "service": "website", "path": "/clubs", "response": "collection" },

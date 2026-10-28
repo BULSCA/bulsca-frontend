@@ -8,9 +8,9 @@
         <!-- Top Title & Pin Row -->
         <div class="flex flex-row items-start justify-between w-full">
           <div class="w-full flex-1">
-            <h1 class="header group-hover:text-bulsca_red transition-colors text-bulsca-blue">
+            <h2 class="header group-hover:text-bulsca_red transition-colors text-bulsca-blue">
               {{ article.title }}
-            </h1>
+            </h2>
 
             <div class="flex flex-row items-center justify-between w-full mt-1 mb-1">
               <small class="text-gray-500 font-normal text-sm">

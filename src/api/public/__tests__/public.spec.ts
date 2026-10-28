@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import apiClient from '@/api/client'
-import { endpointPath, getCollection, getDocument, getResourceAccess, getContactConfig, submitContact, type CollectionEndpoint, type DetailEndpoint } from '../index'
+import { endpointPath, getCollection, getDocument, getResourceAccess, getContactConfig, getPresentation, submitContact, type CollectionEndpoint, type DetailEndpoint } from '../index'
 import { isAccess, isCollection, isDocumentResponse } from '../validation'
 import contract from '../contract.json'
 import { previewResponse } from '@/preview/service'
@@ -57,6 +57,19 @@ describe('public API contracts and consumers', () => {
   it('does not silently replace failed live requests with sample data', async () => {
     vi.spyOn(transport, 'read').mockRejectedValue(new Error('Service unavailable'))
     await expect(getCollection('clubs', signal())).rejects.toThrow('Service unavailable')
+  })
+  it('reads presentation from the website service and supplies labelled preview configuration', async () => {
+    const payload = previewResponse('presentation', {}, {})
+    const read = vi.spyOn(transport, 'read').mockResolvedValue(payload)
+    const live = await getPresentation(signal())
+    expect(read.mock.calls[0]![0]).toBe('/presentation')
+    expect(read.mock.calls[0]![4]!.defaults.baseURL).toBe('/website/v1')
+    config.previewMode = true
+    const preview = await getPresentation(signal())
+    expect(preview).toEqual(live)
+    expect(preview.banner_overrides['/welfare']).toBe('preview-welfare')
+    expect(preview.campaigns[0]!.description).toContain('Sample campaign')
+    expect(read).toHaveBeenCalledTimes(1)
   })
   it('does not replay failed writes or accept an unconfirmed success', async () => {
     const post = vi.spyOn(apiClient, 'post').mockResolvedValueOnce({ data: { unexpected: true } })

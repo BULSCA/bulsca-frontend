@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import PageLayout from '@/components/PageLayout.vue'
 import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getContactConfig, submitContact } from '@/api/public'
@@ -53,9 +54,9 @@ async function submit() {
 onBeforeUnmount(() => { alive = false; controller?.abort() })
 </script>
 <template>
-  <main id="main-content" class="public-page">
+  <PageLayout title="Contact BULSCA">
     <nav aria-label="Breadcrumb"><RouterLink to="/">Home</RouterLink> / <RouterLink to="/contact">Contact</RouterLink> / Form</nav>
-    <header class="page-intro"><h1>Contact BULSCA</h1><p>Choose a department and send your enquiry. Your draft stays on this page if a request fails.</p></header>
+    <p class="page-description">Choose a department and send your enquiry. Your draft stays on this page if a request fails.</p>
     <p><SafeLink :to="`mailto:${department.email}`">Email {{ department.label }} directly</SafeLink> if the form is unavailable.</p>
     <RequestError v-if="configError" :error="configError" :busy="configLoading" @retry="config.execute()" />
     <p v-if="configLoading" role="status">Checking contact service availability…</p>
@@ -78,5 +79,5 @@ onBeforeUnmount(() => { alive = false; controller?.abort() })
         <button type="submit" class="action-button" :disabled="pending || !canSubmit">{{ pending ? 'Sending…' : previewMode ? 'Preview submission' : 'Send message' }}</button>
       </fieldset>
     </form>
-  </main>
+  </PageLayout>
 </template>

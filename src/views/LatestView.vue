@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useApi } from '@/composables/useApi'
 import { getArticles } from '@/api/articles/articles'
 import type { Tag } from '@/api/articles/types'
-import PageBanner from '@/components/PageBanner.vue'
+import PageLayout from '@/components/PageLayout.vue'
 import ArticlePreviewCard from '@/components/articles/ArticlePreviewCard.vue'
 import ArticleSkeleton from '@/components/articles/ArticleSkeleton.vue'
 import ArticleEmpty from '@/components/articles/ArticleEmpty.vue'
@@ -23,9 +23,7 @@ function selectTag(value: Tag) { void router.push({ path: '/latest', query: { ta
 function pageQuery(value: number) { return { ...route.query, page: String(value) } }
 </script>
 <template>
-  <PageBanner title="Latest" subtitle="News" background-image="/storage/photos/DSC_0335.jpg" />
-  <main id="main-content" class="public-page" :aria-busy="loading">
-    <h1>Latest news</h1>
+  <PageLayout title="Latest news" subtitle="News" :busy="loading">
     <p>Announcements and updates from the university lifesaving community.</p>
     <p v-if="tag" class="my-4">Tag: {{ tag }} <RouterLink to="/latest">Clear filter</RouterLink></p>
     <RequestError v-if="error" :error="error" :stale="!!data" :busy="loading" @retry="load" />
@@ -41,5 +39,5 @@ function pageQuery(value: number) { return { ...route.query, page: String(value)
         <RouterLink v-if="data.meta.current_page < data.meta.last_page" :to="{ path: '/latest', query: pageQuery(data.meta.current_page + 1) }">Next</RouterLink>
       </nav>
     </template>
-  </main>
+  </PageLayout>
 </template>

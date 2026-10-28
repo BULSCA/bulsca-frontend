@@ -31,6 +31,9 @@ describe('complete public browsing in preview mode', () => {
     await vi.waitFor(() => expect(app.text()).toContain(title))
     expect(router.currentRoute.value.name).not.toBe('not-found')
     expect(app.find('main').exists()).toBe(true)
+    expect(app.findAll('h1')).toHaveLength(1)
+    expect(app.find('.page-banner').exists()).toBe(path !== '/')
+    expect(app.find('.home-carousel').exists()).toBe(path === '/')
     expect(app.find('[aria-label="Main navigation"]').exists()).toBe(true)
     expect(app.text()).toContain('Preview — sample data')
     expect(app.text()).not.toContain('This section is temporarily unavailable')
@@ -90,6 +93,15 @@ describe('complete public browsing in preview mode', () => {
     expect(app.text()).toContain('no mailing-list subscription was submitted')
   })
 
+  it('shares a single highlights read between the carousel and competition cards', async () => {
+    const publicApi = await import('@/api/public')
+    const requests = vi.spyOn(publicApi, 'getCollection')
+    const { app } = await visit('/')
+    await vi.waitFor(() => expect(app.find('a[href="/competitions/example-university-2026.1"]').exists()).toBe(true))
+    expect(requests.mock.calls.filter(call => call[0] === 'highlights')).toHaveLength(1)
+    expect(app.find('.home-carousel').exists()).toBe(true)
+  })
+
   it('closes the mobile menu and submenus when navigating or pressing Escape', async () => {
     const { app, router } = await visit('/')
     await app.get('.menu-toggle').trigger('click')
@@ -115,6 +127,7 @@ describe('complete public browsing in preview mode', () => {
   it.each(['/dashboard', '/settings', '/admin/users', '/article/create', '/competitions/example.1/manage', '/get-involved/clubs/example.1/edit'])('hands management URL %s to the portal', async path => {
     const { app } = await visit(path)
     expect(app.get('h1').text()).toBe('Member and management portal')
+    expect(app.find('.page-banner').exists()).toBe(true)
     expect(app.get('a[href="https://portal.bulsca.co.uk"]').text()).toContain('Open the portal')
   })
 
@@ -122,6 +135,7 @@ describe('complete public browsing in preview mode', () => {
     const { router, app } = await visit('/this-page-does-not-exist')
     expect(router.currentRoute.value.name).toBe('not-found')
     expect(app.get('h1').text()).toBe('Page not found')
+    expect(app.find('.page-banner').exists()).toBe(true)
   })
 })
 
@@ -129,7 +143,10 @@ describe('live services may be unavailable', () => {
   it('keeps successful directory data when a new filter fails', async () => {
     config.previewMode = false
     const transport = await import('@/api/client')
-    vi.spyOn(transport, 'read').mockResolvedValueOnce(previewResponse('clubs', {}, {})).mockRejectedValueOnce(new ApiFailure('server', 'Unavailable', 500))
+    vi.spyOn(transport, 'read').mockImplementation(async path => {
+      if (path.split('?')[0] === '/clubs' && !path.includes('q=')) return previewResponse('clubs', {}, {})
+      throw new ApiFailure('server', 'Unavailable', 500)
+    })
     const { app, router } = await visit('/get-involved/clubs')
     await vi.waitFor(() => expect(app.text()).toContain('Example University Lifesaving'))
     await router.push('/get-involved/clubs?q=updated-filter')
@@ -146,6 +163,7 @@ describe('live services may be unavailable', () => {
     const { app } = await visit(path)
     await vi.waitFor(() => expect(app.find('[role="alert"]').exists()).toBe(true))
     expect(app.find('h1').exists()).toBe(true)
+    expect(app.find('.page-banner .hero-photo').exists()).toBe(true)
     expect(app.find('[aria-label="Related pages"]').exists()).toBe(true)
     expect(app.text()).not.toContain('Example University Lifesaving')
     expect(app.text()).not.toContain('Preview — sample data')
@@ -159,6 +177,7 @@ describe('live services may be unavailable', () => {
     const { app } = await visit('/')
     await vi.waitFor(() => expect(app.findAll('[role="alert"]').length).toBe(2))
     expect(app.get('h1').text()).toBe('University lifesaving, together')
+    expect(app.find('.home-carousel .hero-photo').exists()).toBe(true)
     expect(app.text()).toContain('By students, for students')
     expect(app.text()).toContain('Find a club')
   })

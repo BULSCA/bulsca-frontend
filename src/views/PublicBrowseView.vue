@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import PageLayout from '@/components/PageLayout.vue'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getCollection, getDocument, type CollectionEndpoint, type DetailEndpoint, type Params } from '@/api/public'
@@ -44,9 +45,9 @@ function debounce() { clearTimeout(timer); timer = setTimeout(searchNow, 300) }
 onBeforeUnmount(() => clearTimeout(timer))
 </script>
 <template>
-  <main id="main-content" class="public-page" :aria-busy="loading">
+  <PageLayout :title="document?.title || definition.title" :busy="loading">
     <nav aria-label="Breadcrumb"><RouterLink to="/">Home</RouterLink> / {{ definition.title }}</nav>
-    <header class="page-intro"><h1>{{ document?.title || definition.title }}</h1><p>{{ definition.intro }}</p></header>
+    <p class="page-description">{{ definition.intro }}</p>
     <nav class="quick-links" aria-label="Related pages"><SafeLink v-for="link in definition.links" :key="link.url" :to="link.url">{{ link.label }}</SafeLink></nav>
     <form v-if="definition.search" class="search-form" role="search" @submit.prevent="searchNow">
       <label>Search<input v-model="search" type="search" name="q" @input="debounce" /></label>
@@ -82,5 +83,5 @@ onBeforeUnmount(() => clearTimeout(timer))
       <section v-if="document.entries?.length" class="content-section"><h2>Explore more</h2><PublicCards :entries="document.entries" /></section>
       <DocumentAccess v-if="document.downloadable && definition.endpoint === 'resource'" :id="String(document.id)" />
     </article>
-  </main>
+  </PageLayout>
 </template>

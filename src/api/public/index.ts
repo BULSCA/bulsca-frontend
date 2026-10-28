@@ -6,6 +6,7 @@ import { reportError } from '@/services/diagnostics'
 import contract from './contract.json'
 import { isAccess, isCollection, isContactConfig, isDocumentResponse, isReceipt } from './validation'
 import type { ContactSubmission } from './types'
+import { isPresentationEnvelope, parsePresentation } from '../presentation'
 
 export type Endpoint = keyof typeof contract.endpoints
 export type CollectionEndpoint = 'highlights' | 'social' | 'clubs' | 'committees' | 'competitions' | 'championships' | 'seasons' | 'resource-pages' | 'resources' | 'sercs' | 'casualties'
@@ -36,6 +37,7 @@ export const getCollection = (endpoint: CollectionEndpoint, signal: AbortSignal,
 export const getDocument = (endpoint: DetailEndpoint, signal: AbortSignal, params: Params) => request(endpoint, isDocumentResponse, signal, params)
 export const getResourceAccess = (signal: AbortSignal, id: string) => request('resource-access', isAccess, signal, { id })
 export const getContactConfig = (signal: AbortSignal) => request('contact-config', isContactConfig, signal)
+export const getPresentation = async (signal: AbortSignal) => parsePresentation(await request('presentation', isPresentationEnvelope, signal))!
 export async function submitContact(payload: ContactSubmission, signal: AbortSignal) {
   signal.throwIfAborted()
   if (previewMode) return { data: { message: 'Preview only: your message was not sent.' } }

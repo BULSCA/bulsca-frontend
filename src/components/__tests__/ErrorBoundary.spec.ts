@@ -17,4 +17,18 @@ describe('section error boundary', () => {
     await wrapper.get('button').trigger('click')
     expect(wrapper.text()).toContain('Recovered')
   })
+  it('provides a retry action to a custom page fallback', async () => {
+    let broken = true
+    const Child = defineComponent({ setup: () => () => { if (broken) throw new Error('private detail'); return h('p', 'Recovered') } })
+    const wrapper = mount(ErrorBoundary, { slots: {
+      default: () => h(Child),
+      fallback: ({ retry }: { retry: () => void }) => h('main', [h('h1', 'Page unavailable'), h('button', { onClick: retry }, 'Retry page')]),
+    } })
+    await nextTick()
+    expect(wrapper.get('h1').text()).toBe('Page unavailable')
+    broken = false
+    await wrapper.get('button').trigger('click')
+    expect(wrapper.text()).toBe('Recovered')
+    wrapper.unmount()
+  })
 })

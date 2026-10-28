@@ -1,6 +1,7 @@
 import { ApiFailure } from '@/api/errors'
 import type { PublicCollection, PublicDocument, PublicEntry } from '@/api/public/types'
 import * as data from './data'
+import { previewPresentation } from '@/content/presentation'
 
 function find(entries: PublicEntry[], slug: string) {
   const found = entries.find(item => item.slug === slug || String(item.id) === slug)
@@ -24,6 +25,7 @@ export function previewResponse(endpoint: string, params: Record<string, string>
   const season = params.season === 'current' ? '2026-27' : params.season || '2026-27'
   let item: PublicDocument
   switch (endpoint) {
+    case 'presentation': return { data: previewPresentation }
     case 'club': item = data.document(find(data.clubs, params.slug!), { entries: data.competitions, links: [{ label: 'Contact this sample club', url: '/contact-form?department=recruitment' }] }); break
     case 'committee': item = data.document(find(data.committees, season), { entries: data.members(season) }); break
     case 'member': find(data.committees, season); item = data.document(find(data.members(season), params.slug!), { links: [{ label: 'Contact the committee', url: '/contact' }] }); break

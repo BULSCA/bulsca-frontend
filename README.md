@@ -39,6 +39,45 @@ Document access uses metadata and an access-link response `{ data: { url, filena
 
 Contact configuration supplies `accepts_submissions` and `turnstile_site_key`. Live submission requires available configuration and a verified Turnstile token; the backend must validate that token. POST fields match the existing form (`name`, `email`, `department`, `subject`, `message`, `cf-turnstile-response`). Failed or uncertain sends preserve the in-memory draft and are never retried automatically. Department email links remain available if verification or the contact API is down.
 
+## Carousel and page photos
+
+The homepage carousel shares one highlights request with the competition cards. It offers the nearest current/upcoming competition, active campaign slides, permanent BULSCA slides and a July–November freshers slide. Rotation runs every six seconds, pauses on hover/focus or hidden tabs, and stays paused after manual navigation until Play is selected. Reduced-motion preferences disable automatic rotation. Bundled photos and permanent slides remain usable when services fail.
+
+Every other public page has a photo banner and one page heading. Page photos are chosen randomly from a global pool, with optional fixed-image overrides by canonical page path. Choices are stored per tab session, ignoring query strings and fragments, and reused on return visits and refreshes while the selected image remains in the pool. Blocked storage falls back to memory. Broken photos advance through other available images, then bundled photos, then a readable solid background.
+
+The prepared website endpoint is `GET /api/v1/presentation` (relative to `VITE_WEBSITE_API_URL`):
+
+```json
+{
+  "data": {
+    "version": "2026-10-28-1",
+    "banner_pool": [
+      { "id": "pool-team", "url": "https://images.example.test/pool-team-v1.jpg", "alt": "University lifesaving team" },
+      { "id": "welfare", "url": "https://images.example.test/welfare-v1.jpg", "alt": "Welfare support" }
+    ],
+    "banner_overrides": { "/welfare": "welfare" },
+    "campaigns": [
+      {
+        "id": "volunteers",
+        "title": "Volunteer with BULSCA",
+        "description": "Help support university lifesaving.",
+        "image_url": "https://images.example.test/volunteers-v1.jpg",
+        "link": { "label": "Get involved", "url": "/get-involved" },
+        "order": 1,
+        "starts_at": "2026-10-01T00:00:00Z",
+        "ends_at": "2026-12-01T00:00:00Z"
+      }
+    ]
+  }
+}
+```
+
+Use unique stable IDs and public HTTP(S) or root-relative image URLs. Override values reference IDs in the pool. Campaign description, link and schedule bounds are optional; dates should include their timezone. Campaigns are ordered by ascending `order`, then ID, and their end time is exclusive. The backend should return only published content. Invalid individual entries are ignored; a malformed envelope leaves the cached/bundled configuration intact.
+
+Configuration and selected image metadata are cached in namespaced `sessionStorage`, separated between preview and live modes. Cached configuration renders immediately and refreshes once per app session. A background refresh does not swap a currently displayed page banner; the refreshed pool is applied on later navigation or page reload. Image bytes use normal browser/CDN caching: serve stable, versioned asset URLs with suitable `Cache-Control` headers. Changing the content should change the URL. Session metadata alone does not prevent network revalidation or downloads.
+
+Preview mode includes a sample campaign and a fixed welfare photo. The backend endpoint, image storage/CDN setup and portal editing controls are future integration work; this change implements their frontend consumer and response contract.
+
 ## Verification
 
 ```sh

@@ -1,0 +1,175 @@
+.page-banner,
+.home-carousel {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(120deg, #070660, #262258);
+  color: white;
+}
+.page-banner {
+  min-height: clamp(14rem, 40vh, 28rem);
+  display: flex;
+  align-items: center;
+}
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+.hero-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, #050322c9, #05032280);
+}
+.page-banner-content {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.banner-logo {
+  width: clamp(5rem, 10vw, 9rem);
+  height: auto;
+  object-fit: contain;
+}
+.page-banner h1 {
+  color: white;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  line-height: 1.15;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.page-banner-content > div {
+  border-left: 2px solid #ffffff80;
+  padding-left: 2rem;
+}
+.page-banner p {
+  font-size: clamp(0.9rem, 1.8vw, 1.2rem);
+  margin-top: 0.8rem;
+  max-width: 70ch;
+}
+.page-description {
+  margin-bottom: 2rem;
+  max-width: 85ch;
+}
+.home-carousel {
+  min-height: clamp(24rem, 60vh, 42rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carousel-slide {
+  text-align: center;
+  width: min(1100px, 100%);
+  padding: 1.5rem 2rem 5rem;
+}
+.carousel-logo {
+  width: clamp(4rem, 9vw, 8rem);
+  height: auto;
+  margin: 0 auto 1rem;
+}
+.carousel-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(2rem, 4.5vw, 4.2rem);
+  line-height: 1.12;
+  text-wrap: balance;
+}
+.carousel-description {
+  font-size: clamp(1rem, 1.7vw, 1.35rem);
+  margin: 1rem auto;
+  max-width: 70ch;
+}
+.carousel-link {
+  display: inline-block;
+  margin-top: 0.6rem;
+  padding: 0.7rem 1.1rem;
+  border-radius: 0.3rem;
+  background: white;
+  color: #070660;
+  font-weight: 700;
+  text-decoration: none;
+}
+.carousel-controls {
+  position: absolute;
+  bottom: 1rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0 0.5rem;
+}
+.carousel-controls button {
+  color: white;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  border: 1px solid #ffffff80;
+  border-radius: 0.3rem;
+  background: #050322b3;
+  padding: 0.3rem 0.6rem;
+}
+.carousel-controls button:disabled {
+  cursor: default;
+  opacity: 0.75;
+}
+.carousel-dots {
+  display: flex;
+  overflow-x: auto;
+  max-width: min(50vw, 36rem);
+  gap: 0.1rem;
+}
+.carousel-dots button {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: #fff8;
+  min-width: 2rem;
+}
+.carousel-dots button[aria-current='true'] {
+  color: white;
+  text-shadow: 0 0 5px white;
+}
+.carousel-play {
+  font-size: 0.85rem;
+}
+@media (max-width: 600px) {
+  .banner-logo {
+    display: none;
+  }
+  .page-banner-content > div {
+    border-left: 0;
+    padding-left: 0;
+  }
+  .carousel-slide {
+    padding: 1rem 1rem 6rem;
+  }
+  .carousel-controls {
+    gap: 0.2rem;
+  }
+  .carousel-dots button {
+    min-width: 1.5rem;
+    padding: 0.2rem;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-photo {
+    animation: hero-photo-appear 0.3s ease-out;
+  }
+}
+@keyframes hero-photo-appear {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+}

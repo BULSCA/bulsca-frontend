@@ -9,10 +9,12 @@ function retry() { version.value++; failed.value = false }
 watch(() => props.resetKey, () => { if (failed.value) retry() })
 </script>
 <template>
-  <section v-if="failed" role="alert" class="container-responsive py-8">
-    <h1>This section is temporarily unavailable</h1>
-    <p>You can still use the navigation or try loading this section again.</p>
-    <button type="button" class="mt-4 rounded border px-4 py-2" @click="retry">Try again</button>
-  </section>
+  <slot v-if="failed" name="fallback" :retry="retry">
+    <section role="alert" class="container-responsive py-8">
+      <h1>This section is temporarily unavailable</h1>
+      <p>You can still use the navigation or try loading this section again.</p>
+      <button type="button" class="mt-4 rounded border px-4 py-2" @click="retry">Try again</button>
+    </section>
+  </slot>
   <slot v-else :key="version" />
 </template>

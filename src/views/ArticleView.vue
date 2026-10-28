@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import PageLayout from '@/components/PageLayout.vue'
 import { watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getArticleBySlug } from '@/api/articles/articles'
@@ -19,19 +20,16 @@ watch(() => route.params.slug, async () => {
 }, { immediate: true })
 </script>
 <template>
-  <main id="main-content" class="public-page" :aria-busy="loading">
+  <PageLayout :title="data?.data.title || 'Article'" :subtitle="data ? formatDateAuthor(data.data.created_at, data.data.author) : 'News and announcements'" :busy="loading">
     <RouterLink to="/latest">Back to news</RouterLink>
     <RequestError v-if="error" :error="error" :stale="!!data" :busy="loading" @retry="load" />
     <p v-if="loading && !data" role="status">Loading article…</p>
-    <h1 v-if="!data">Article</h1>
     <article v-if="data" class="prose max-w-none py-6">
-      <h1>{{ data.data.title }}</h1>
-      <p>{{ formatDateAuthor(data.data.created_at, data.data.author) }}</p>
       <!-- Only use the versioned backend's allowlist-sanitized HTML. -->
       <div v-html="data.data.content" />
       <nav v-if="data.data.tags.length" aria-label="Article tags" class="mt-6 flex gap-3">
         <RouterLink v-for="tag in data.data.tags" :key="tag.id" :to="{ path: '/latest', query: { tag: tag.slug } }">{{ tag.name }}</RouterLink>
       </nav>
     </article>
-  </main>
+  </PageLayout>
 </template>

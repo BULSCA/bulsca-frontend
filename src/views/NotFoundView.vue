@@ -1,7 +1,9 @@
+<script setup lang="ts">
+import PageLayout from '@/components/PageLayout.vue'
+</script>
 <template>
-  <main id="main-content" class="public-page">
-    <h1>Page not found</h1>
+  <PageLayout title="Page not found">
     <p>We could not find this page. You can return home or browse the latest news.</p>
     <RouterLink to="/">Home</RouterLink> · <RouterLink to="/latest">Latest news</RouterLink>
-  </main>
+  </PageLayout>
 </template>
