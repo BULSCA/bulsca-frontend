@@ -1,5 +1,17 @@
 import { safeHref } from '@/utils/links'
 import { object } from './public/validation'
+import { isCalendarDate } from '@/utils/dates'
+
+export interface ChampionshipCampaign {
+  id: string
+  title: string
+  start_date: string
+  end_date: string
+  location: string
+  colours: [string, string]
+  logo_url?: string | null
+  link?: { label: string; url: string }
+}
 
 export interface PresentationImage {
   id: string
@@ -21,6 +33,33 @@ export interface PresentationConfig {
   banner_pool: PresentationImage[]
   banner_overrides: Record<string, string>
   campaigns: CampaignSlide[]
+  championship_campaign?: ChampionshipCampaign
+}
+export function isChampionshipCampaign(value: unknown): value is ChampionshipCampaign {
+  return (
+    object(value) &&
+    typeof value.id === 'string' &&
+    /^[a-zA-Z0-9_-]{1,128}$/.test(value.id) &&
+    typeof value.title === 'string' &&
+    value.title.trim().length > 0 &&
+    value.title.length <= 200 &&
+    isCalendarDate(value.start_date) &&
+    isCalendarDate(value.end_date) &&
+    value.end_date >= value.start_date &&
+    typeof value.location === 'string' &&
+    value.location.trim().length > 0 &&
+    value.location.length <= 500 &&
+    Array.isArray(value.colours) &&
+    value.colours.length === 2 &&
+    value.colours.every((colour) => typeof colour === 'string' && /^#[0-9a-f]{6}$/i.test(colour)) &&
+    (value.logo_url === undefined || value.logo_url === null || publicImageUrl(value.logo_url)) &&
+    (value.link === undefined ||
+      (object(value.link) &&
+        typeof value.link.label === 'string' &&
+        !!value.link.label.trim() &&
+        typeof value.link.url === 'string' &&
+        !!safeHref(value.link.url)))
+  )
 }
 export function publicImageUrl(value: unknown): value is string {
   if (typeof value !== 'string' || !safeHref(value)) return false
@@ -106,7 +145,15 @@ export function parsePresentation(value: unknown): PresentationConfig | null {
     campaignIds.add(campaign.id)
     return true
   })
-  return { version: data.version, banner_pool, banner_overrides, campaigns }
+  return {
+    version: data.version,
+    banner_pool,
+    banner_overrides,
+    campaigns,
+    ...(isChampionshipCampaign(data.championship_campaign)
+      ? { championship_campaign: data.championship_campaign }
+      : {}),
+  }
 }
 export const isPresentationEnvelope = (value: unknown): value is { data: unknown } =>
   parsePresentation(value) !== null

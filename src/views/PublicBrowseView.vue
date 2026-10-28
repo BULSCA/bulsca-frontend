@@ -50,8 +50,8 @@ onBeforeUnmount(() => clearTimeout(timer))
     <p class="page-description">{{ definition.intro }}</p>
     <nav class="quick-links" aria-label="Related pages"><SafeLink v-for="link in definition.links" :key="link.url" :to="link.url">{{ link.label }}</SafeLink></nav>
     <form v-if="definition.search" class="search-form" role="search" @submit.prevent="searchNow">
-      <label>Search<input v-model="search" type="search" name="q" @input="debounce" /></label>
-      <label>Tag<input v-model="tag" name="tag" placeholder="All tags" /></label>
+      <label>Search<input class="form-control" v-model="search" type="search" name="q" @input="debounce" /></label>
+      <label>Tag<input class="form-control" v-model="tag" name="tag" placeholder="All tags" /></label>
       <button type="submit" class="action-button">Search</button>
       <RouterLink v-if="query.q || query.tag" :to="route.path">Clear filters</RouterLink>
     </form>

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPresentationStore } from '@/services/presentation'
-import { bundledImages, fallbackPresentation } from '@/content/presentation'
+import { bundledImages, fallbackPresentation, previewPresentation } from '@/content/presentation'
 import type { PresentationConfig } from '@/api/presentation'
 
 const remote: PresentationConfig = {
@@ -21,6 +21,27 @@ const options = () => ({
 })
 beforeEach(() => sessionStorage.clear())
 describe('session banner selection and configuration', () => {
+  it('retains a published championship campaign offline and removes it after a successful unpublished response', async () => {
+    const published = {
+      ...remote,
+      championship_campaign: previewPresentation.championship_campaign,
+    }
+    const first = createPresentationStore({ ...options(), load: async () => published })
+    await first.ensure()
+    const offline = createPresentationStore({
+      ...options(),
+      load: async () => {
+        throw new Error('Offline')
+      },
+    })
+    offline.choose('/about')
+    expect(offline.config.value.championship_campaign?.title).toBe('Champs 2027')
+    await offline.ensure()
+    expect(offline.config.value.championship_campaign?.title).toBe('Champs 2027')
+    const unpublished = createPresentationStore(options())
+    await unpublished.ensure()
+    expect(unpublished.config.value.championship_campaign).toBeUndefined()
+  })
   it('deduplicates the presentation read and remembers choices across navigation and refresh', async () => {
     const opts = { ...options(), random: vi.fn<() => number>(() => 0.9) }
     const store = createPresentationStore(opts)

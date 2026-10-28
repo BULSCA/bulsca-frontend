@@ -2,6 +2,7 @@ import type { CampaignSlide } from '@/api/presentation'
 import type { PublicEntry, PublicLink } from '@/api/public/types'
 import { bundledImages, freshersImage } from '@/content/presentation'
 import { entryPath } from '@/utils/links'
+import { londonDay } from '@/utils/dates'
 export interface HeroSlide {
   id: string
   title: string
@@ -9,16 +10,6 @@ export interface HeroSlide {
   image: string
   link?: PublicLink
   type: 'competition' | 'campaign' | 'brand' | 'seasonal'
-}
-function londonDay(date: Date) {
-  const parts = new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'Europe/London',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).formatToParts(date)
-  const field = (type: string) => parts.find((part) => part.type === type)?.value || ''
-  return `${field('year')}-${field('month')}-${field('day')}`
 }
 export function buildHeroSlides(
   campaigns: CampaignSlide[],

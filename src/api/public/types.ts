@@ -15,6 +15,7 @@ export interface PublicEntry {
   parent?: string
   tags?: string[]
   links?: PublicLink[]
+  results_link?: PublicLink
 }
 export interface PublicDocument extends PublicEntry {
   sections: ContentSection[]

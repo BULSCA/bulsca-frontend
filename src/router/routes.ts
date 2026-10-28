@@ -8,7 +8,7 @@ const staticRoute = (path: string, name: string, content: string): RouteRecordRa
 const browseRoute = (path: string, name: string, browse: string): RouteRecordRaw => ({ path, name, component: BrowsePage, meta: { browse, title: browsePages[browse]!.title } })
 const handoff = (path: string, name: string): RouteRecordRaw => ({ path, name, component: PortalPage, meta: { title: 'Member and management portal' } })
 export const routes: RouteRecordRaw[] = [
-  staticRoute('/', 'home', 'home'), staticRoute('/about', 'about', 'about'),
+  { path: '/', name: 'home', component: () => import('@/views/HomeView.vue'), meta: { title: pages.home!.title } }, staticRoute('/about', 'about', 'about'),
   { path: '/about/records', name: 'records', component: () => import('@/views/RecordsView.vue'), meta: { title: 'BULSCA records' } },
   staticRoute('/freshers', 'freshers', 'freshers'), staticRoute('/get-involved', 'get-involved', 'involved'),
   staticRoute('/get-involved/clubs/create', 'create-club', 'create-club'),

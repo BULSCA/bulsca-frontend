@@ -8,6 +8,7 @@ export function isEntry(v: unknown): v is PublicEntry {
     && typeof v.title === 'string' && kinds.includes(String(v.kind))
     && ['summary', 'date', 'location', 'image_url', 'parent'].every(key => v[key] === undefined || typeof v[key] === 'string')
     && (v.tags === undefined || strings(v.tags)) && (v.links === undefined || (Array.isArray(v.links) && v.links.every(isLink)))
+    && (v.results_link === undefined || isLink(v.results_link))
 }
 export function isSection(v: unknown): v is ContentSection {
   return object(v) && typeof v.heading === 'string' && strings(v.paragraphs) && (v.bullets === undefined || strings(v.bullets))

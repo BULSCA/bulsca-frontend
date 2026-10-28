@@ -6,6 +6,9 @@ import SocialLinks from './footer/SocialLinks.vue'
 import Copyright from './footer/Copyright.vue'
 import { useReferrer } from '@/composables/useReferrer'
 import type { LinkItem, SocialItem } from '@/types/footer'
+import ContentContainer from './ContentContainer.vue'
+import facebook from '@/assets/social/facebook.png'
+import instagram from '@/assets/social/instagram.png'
 
 const props = defineProps<{
   quickLinks?: LinkItem[]
@@ -24,12 +27,12 @@ const defaultQuick: LinkItem[] = [
   { label: 'Cookies', to: '/cookies' },
   { label: 'Terms', to: '/terms-of-service' },
   { label: 'Data deletion', to: '/data-deletion' },
-  { label: 'Scoring.Events', href: `https://scoring.events?ref=${hostEncoded}`, external: true }
+  { label: 'Scoring.Events', href: `https://scoring.events?ref=${hostEncoded}`, external: true },
 ]
 
 const defaultSocial: SocialItem[] = [
-  { href: 'https://www.facebook.com/BULSCA/', imgSrc: '/storage/logo/f_logo_RGB-Blue_1024.png', alt: 'Facebook' },
-  { href: 'https://www.instagram.com/bulsca', imgSrc: '/storage/logo/Instagram_Glyph_Gradient_RGB.png', alt: 'Instagram' }
+  { href: 'https://www.facebook.com/BULSCA/', imgSrc: facebook, alt: 'Facebook' },
+  { href: 'https://www.instagram.com/bulsca', imgSrc: instagram, alt: 'Instagram' },
 ]
 
 const quick = props.quickLinks ?? defaultQuick
@@ -37,16 +40,16 @@ const social = props.socialLinks ?? defaultSocial
 </script>
 
 <template>
-  <div class="bg-bulsca-blue">
-    <div class="w-full container-responsive">
-      <div class="flex flex-col md:flex-row gap-8 items-stretch md:items-start mx-2">
-        <MailingList :action="props.mailingAction" :placeholder="props.mailingPlaceholder" class="md:flex-[2]" />
-        <div class="flex flex-col items-center justify-center md:flex-[1] flex-1 border-0 text-center">
+  <footer class="site-footer">
+    <ContentContainer>
+      <div class="footer-grid">
+        <MailingList :action="props.mailingAction" :placeholder="props.mailingPlaceholder" />
+        <div class="footer-links">
           <QuickLinks :links="quick" />
           <SocialLinks :links="social" />
         </div>
       </div>
-    </div>
+    </ContentContainer>
     <Copyright :year="props.year" />
-  </div>
+  </footer>
 </template>

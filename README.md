@@ -35,6 +35,8 @@ The draft endpoint catalogue is `src/api/public/contract.json`, DTOs are in `src
 
 Directory endpoints accept `q`, `tag` and `page` and return `{ data: PublicEntry[], meta: { current_page, last_page, total } }`. Detail endpoints return `{ data: PublicDocument }`, containing structured text sections, optional tables, related entries and safe links. Plain text is rendered as text, not arbitrary HTML. Article detail HTML continues to require the existing backend allowlist sanitizer.
 
+Competition entries can include `results_link: { label, url }` for a published result destination. This may be a public result service or a resource detail page that prepares document access. Missing links keep the date-based status visible; tags never imply that results exist. Competition cards use London calendar dates for countdowns and update while the page remains open. Existing entry responses without this optional field remain supported.
+
 Document access uses metadata and an access-link response `{ data: { url, filename?, expires_at? } }`. The URL can point to public or signed object storage; no local Laravel file path is assumed. Access failures and expired links leave the surrounding page usable.
 
 Contact configuration supplies `accepts_submissions` and `turnstile_site_key`. Live submission requires available configuration and a verified Turnstile token; the backend must validate that token. POST fields match the existing form (`name`, `email`, `department`, `subject`, `message`, `cf-turnstile-response`). Failed or uncertain sends preserve the in-memory draft and are never retried automatically. Department email links remain available if verification or the contact API is down.
@@ -77,6 +79,45 @@ Use unique stable IDs and public HTTP(S) or root-relative image URLs. Override v
 Configuration and selected image metadata are cached in namespaced `sessionStorage`, separated between preview and live modes. Cached configuration renders immediately and refreshes once per app session. A background refresh does not swap a currently displayed page banner; the refreshed pool is applied on later navigation or page reload. Image bytes use normal browser/CDN caching: serve stable, versioned asset URLs with suitable `Cache-Control` headers. Changing the content should change the URL. Session metadata alone does not prevent network revalidation or downloads.
 
 Preview mode includes a sample campaign and a fixed welfare photo. The backend endpoint, image storage/CDN setup and portal editing controls are future integration work; this change implements their frontend consumer and response contract.
+
+### Full-width championship campaign
+
+The same presentation response can optionally include `data.championship_campaign`:
+
+```json
+{
+  "id": "champs-2027",
+  "title": "Champs 2027",
+  "start_date": "2027-03-06",
+  "end_date": "2027-03-07",
+  "location": "Alan Higgs Centre, Coventry",
+  "colours": ["#070660", "#9e0d06"],
+  "logo_url": null,
+  "link": { "label": "Explore the Championships", "url": "/competitions/championships" }
+}
+```
+
+This renders below the homepage highlights as a full-width striped campaign band, separate from carousel slides. `logo_url` and `link` are optional. Without artwork, the title acts as the identity panel; broken logos fall back to the title. Colours must be two six-digit hex values. Dates must be real ISO calendar dates with the end on or after the start; they describe the event, not the publication window. The API controls publication by returning, omitting or setting this field to `null`. Invalid championship data is omitted without losing the remaining presentation configuration.
+
+Preview always supplies the legacy Champs 2027 announcement through the presentation consumer, including its dates and venue, for layout demonstration. Live mode uses only API/cached campaign data. The existing metadata cache also retains valid championship data while the API is unavailable; a successful response without the field removes it. No extra request is made for this band.
+
+## Shared public layouts
+
+`PageLayout` supplies the page banner and a constrained content body by default. Use `full-width` when composing a page from full-width sections; each `PageSection` still aligns its content through `ContentContainer`. The homepage demonstrates this composition. Keep one H1 per page; section headings use H2 and directory cards use H3.
+
+```vue
+<PageLayout title="A new section" full-width>
+  <PageSection title="Get involved" tone="soft">
+    <IconTextRow title="Help your community" icon="people">
+      <p>Section content goes here.</p>
+    </IconTextRow>
+  </PageSection>
+</PageLayout>
+```
+
+Use `PageSection` tones `plain`, `soft` or `brand`; `IconTextRow` supports alternating desktop placement with `reverse`. `NavigationTile` provides a large link with optional photo and a gradient fallback. `CardFrame` separates its content slot from an optional `footer` action slot. `PublicCards` selects the competition template, section-navigation tiles or standard record frame according to the entry kind. These components are shared by directories, details, articles and contact cards, while informational text uses `ContentSections` and records/standings use `PublicTable`.
+
+Shared visual tokens and component styles live in `src/assets/css/shared.css`. Use `action-button`, `form-control` and `form-label` for new forms and actions. Avoid styling every link or input beneath a page wrapper: each component owns its colours and spacing so photo tiles, campaign actions and the footer retain their contrast. Footer forms use the same controls, preserve live Mailchimp fields and prevent submissions in preview. Social artwork is bundled with the frontend.
 
 ## Verification
 

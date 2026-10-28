@@ -24,7 +24,7 @@ watch(() => route.params.slug, async () => {
     <RouterLink to="/latest">Back to news</RouterLink>
     <RequestError v-if="error" :error="error" :stale="!!data" :busy="loading" @retry="load" />
     <p v-if="loading && !data" role="status">Loading article…</p>
-    <article v-if="data" class="prose max-w-none py-6">
+    <article v-if="data" class="article-copy">
       <!-- Only use the versioned backend's allowlist-sanitized HTML. -->
       <div v-html="data.data.content" />
       <nav v-if="data.data.tags.length" aria-label="Article tags" class="mt-6 flex gap-3">

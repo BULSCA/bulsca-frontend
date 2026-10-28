@@ -7,6 +7,7 @@
 @import "./css/header";
 @import "./css/public";
 @import "./css/presentation";
+@import "./css/shared";
 
 @theme {
   --font-sans: 'Lato', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;

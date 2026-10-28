@@ -18,6 +18,15 @@ export const previewPresentation: PresentationConfig = {
     { id: 'preview-welfare', url: welfare, alt: 'Welfare and inclusion at university lifesaving' },
   ],
   banner_overrides: { '/welfare': 'preview-welfare' },
+  championship_campaign: {
+    id: 'preview-champs-2027',
+    title: 'Champs 2027',
+    start_date: '2027-03-06',
+    end_date: '2027-03-07',
+    location: 'Alan Higgs Centre, Coventry',
+    colours: ['#070660', '#9e0d06'],
+    link: { label: 'Explore the Championships', url: '/competitions/championships' },
+  },
   campaigns: [
     {
       id: 'preview-volunteers',

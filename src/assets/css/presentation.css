@@ -33,11 +33,13 @@
   display: flex;
   align-items: center;
   gap: 2rem;
+  justify-content: center;
 }
 .banner-logo {
   width: clamp(5rem, 10vw, 9rem);
   height: auto;
   object-fit: contain;
+  flex-shrink: 0;
 }
 .page-banner h1 {
   color: white;
@@ -49,6 +51,8 @@
 .page-banner-content > div {
   border-left: 2px solid #ffffff80;
   padding-left: 2rem;
+  max-width: 48rem;
+  min-width: 0;
 }
 .page-banner p {
   font-size: clamp(0.9rem, 1.8vw, 1.2rem);
@@ -148,6 +152,7 @@
   .page-banner-content > div {
     border-left: 0;
     padding-left: 0;
+    text-align: center;
   }
   .carousel-slide {
     padding: 1rem 1rem 6rem;

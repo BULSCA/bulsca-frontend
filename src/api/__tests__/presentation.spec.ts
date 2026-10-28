@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { parsePresentation, publicImageUrl, type CampaignSlide } from '@/api/presentation'
+import { previewPresentation } from '@/content/presentation'
 
 const image = { id: 'pool', url: 'https://images.example.test/pool-v1.jpg', alt: 'Pool team' }
 const campaign: CampaignSlide = {
@@ -16,6 +17,42 @@ const data = {
   campaigns: [campaign],
 }
 describe('presentation response validation', () => {
+  it('accepts an optional championship campaign without requiring a logo', () => {
+    expect(parsePresentation({ data: previewPresentation })?.championship_campaign).toEqual(
+      previewPresentation.championship_campaign,
+    )
+  })
+  it.each([
+    { title: '' },
+    { start_date: '2027-02-30' },
+    { end_date: '2026-01-01' },
+    { location: null },
+    { colours: ['red', '#070660'] },
+    { colours: ['#070660'] },
+    { logo_url: 'javascript:x' },
+    { link: { label: 'Go', url: '//untrusted.test' } },
+  ])('isolates invalid championship data %j from the remaining presentation', (invalid) => {
+    const result = parsePresentation({
+      data: {
+        ...data,
+        championship_campaign: { ...previewPresentation.championship_campaign, ...invalid },
+      },
+    })!
+    expect(result).toEqual(data)
+  })
+  it('accepts an optional logo and removes the campaign when absent from a new response', () => {
+    const logoCampaign = {
+      ...previewPresentation.championship_campaign!,
+      logo_url: 'https://images.example.test/logo.png',
+    }
+    expect(
+      parsePresentation({ data: { ...data, championship_campaign: logoCampaign } })
+        ?.championship_campaign?.logo_url,
+    ).toBe(logoCampaign.logo_url)
+    expect(
+      parsePresentation({ data: { ...data, championship_campaign: null } })?.championship_campaign,
+    ).toBeUndefined()
+  })
   it('accepts the public image pool, fixed overrides and campaigns', () => {
     expect(parsePresentation({ data })).toEqual(data)
   })

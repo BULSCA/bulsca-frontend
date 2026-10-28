@@ -34,6 +34,9 @@ describe('complete public browsing in preview mode', () => {
     expect(app.findAll('h1')).toHaveLength(1)
     expect(app.find('.page-banner').exists()).toBe(path !== '/')
     expect(app.find('.home-carousel').exists()).toBe(path === '/')
+    expect(app.find('footer.site-footer .mailing-list').exists()).toBe(true)
+    expect(app.find('footer.site-footer .content-container').exists()).toBe(true)
+    expect(app.find('main > .content-container, main > .page-body').exists()).toBe(true)
     expect(app.find('[aria-label="Main navigation"]').exists()).toBe(true)
     expect(app.text()).toContain('Preview — sample data')
     expect(app.text()).not.toContain('This section is temporarily unavailable')
@@ -100,6 +103,29 @@ describe('complete public browsing in preview mode', () => {
     await vi.waitFor(() => expect(app.find('a[href="/competitions/example-university-2026.1"]').exists()).toBe(true))
     expect(requests.mock.calls.filter(call => call[0] === 'highlights')).toHaveLength(1)
     expect(app.find('.home-carousel').exists()).toBe(true)
+    expect(app.findAll('.competition-card')).toHaveLength(2)
+  })
+
+  it('restores the icon rows and supplies the full-width Champs campaign through presentation data', async () => {
+    const { app } = await visit('/')
+    await vi.waitFor(() => expect(app.find('.championship-band').exists()).toBe(true))
+    expect(app.findAll('.icon-text-row h2').map(heading => heading.text())).toEqual(['Acting Governing Body', 'By Students, For Students', 'Our Aims'])
+    expect(app.get('main > .page-body > .championship-band').text()).toContain('Champs 2027')
+    expect(app.get('.championship-band').text()).toContain('6th–7th March')
+    expect(app.get('.championship-band').text()).toContain('@ Alan Higgs Centre, Coventry')
+    expect(app.get('.championship-band a').attributes('href')).toBe('/competitions/championships')
+    expect(app.get('footer.site-footer img[alt="Facebook"]').attributes('src')).not.toContain('/storage/')
+  })
+
+  it.each(['/competitions/calendar', '/competitions/league', '/get-involved/clubs/example-university.1'])('uses the same competition tiles on %s', async path => {
+    const { app } = await visit(path)
+    await vi.waitFor(() => expect(app.find('.competition-card .card-action').exists()).toBe(true))
+    expect(app.find('.competition-card .card-date').exists()).toBe(true)
+  })
+
+  it.each(['/resources', '/competitions/championships', '/competitions/previous-leagues', '/get-involved/previous-committees'])('uses large section tiles on %s', async path => {
+    const { app } = await visit(path)
+    await vi.waitFor(() => expect(app.find('.navigation-tiles .navigation-tile').exists()).toBe(true))
   })
 
   it('closes the mobile menu and submenus when navigating or pressing Escape', async () => {
@@ -178,8 +204,9 @@ describe('live services may be unavailable', () => {
     await vi.waitFor(() => expect(app.findAll('[role="alert"]').length).toBe(2))
     expect(app.get('h1').text()).toBe('University lifesaving, together')
     expect(app.find('.home-carousel .hero-photo').exists()).toBe(true)
-    expect(app.text()).toContain('By students, for students')
+    expect(app.text()).toContain('By Students, For Students')
     expect(app.text()).toContain('Find a club')
+    expect(app.find('.championship-band').exists()).toBe(false)
   })
 
   it('can navigate to another page after a section error', async () => {

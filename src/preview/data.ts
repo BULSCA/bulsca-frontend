@@ -8,7 +8,7 @@ export const clubs = [
 ]
 export const competitions = [
   entry('competitions', 'example-university-2026.1', 'Example University Competition', 'A sample league competition with team speed events and SERCs.', { date: '2026-11-14', location: 'Example University Pool', tags: ['League', 'Upcoming'] }),
-  entry('competitions', 'coastal-university-2026.2', 'Coastal University Competition', 'A completed sample competition with published results.', { date: '2026-03-14', location: 'Coastal City Pool', tags: ['League', 'Results available'] }),
+  entry('competitions', 'coastal-university-2026.2', 'Coastal University Competition', 'A completed sample competition with published results.', { date: '2026-03-14', location: 'Coastal City Pool', tags: ['League', 'Results available'], results_link: { label: 'View results', url: '/resources/view/sample-entry-pack' } }),
 ]
 export const seasons = ['2026-27', '2025-26'].map(slug => entry('seasons', slug, `League ${slug}`, 'Sample season with competition results and standings.'))
 export const committees = ['2026-27', '2025-26'].map(slug => entry('committees', slug, `Committee ${slug}`, 'Fictional members demonstrating committee and profile pages.'))

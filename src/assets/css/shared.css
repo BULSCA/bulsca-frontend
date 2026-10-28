@@ -1,0 +1,412 @@
+:root {
+  --space-section: clamp(2.5rem, 5vw, 4.5rem);
+  --text-section-title: clamp(1.8rem, 3.4vw, 2.8rem);
+  --site-border: #d8dae4;
+  --site-ink: #25283d;
+  --site-muted: #555b6d;
+  --site-soft: #f4f5f9;
+  --site-radius: 0.5rem;
+}
+:where(a) {
+  color: var(--color-bulsca-blue);
+  text-decoration: underline;
+}
+.content-container {
+  width: min(1200px, 100%);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 3vw, 1.5rem);
+  min-width: 0;
+}
+.page-section {
+  padding-block: var(--space-section);
+}
+.page-section--soft {
+  background: var(--site-soft);
+}
+.page-section--brand {
+  background: var(--color-bulsca-blue);
+  color: white;
+}
+.page-section--brand h2 {
+  color: inherit;
+}
+.section-heading {
+  margin-bottom: 2rem;
+  max-width: 85ch;
+}
+.section-heading h2,
+.icon-text-row h2 {
+  font-size: var(--text-section-title);
+  line-height: 1.2;
+  font-weight: 750;
+  text-wrap: balance;
+}
+.section-heading p,
+.reading-copy p {
+  margin-block: 0.8rem;
+  line-height: 1.8;
+}
+.reading-copy {
+  max-width: 85ch;
+}
+.home-intro {
+  text-align: center;
+  margin-bottom: var(--space-section);
+}
+.home-intro h1 {
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  text-wrap: balance;
+}
+.feature-rows {
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 5rem);
+}
+.icon-text-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+.site-icon {
+  width: 1.4rem;
+  height: 1.4rem;
+  flex-shrink: 0;
+}
+.icon-text-row > .site-icon {
+  width: 4rem;
+  height: 4rem;
+  color: var(--color-bulsca-blue);
+}
+.navigation-tiles {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  margin-block: 2rem;
+}
+.navigation-tile {
+  position: relative;
+  isolation: isolate;
+  min-height: 13rem;
+  padding: 2rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(45deg, var(--color-bulsca-blue), var(--color-bulsca-red));
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  font-weight: 750;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  text-transform: uppercase;
+  border-radius: var(--site-radius);
+}
+.navigation-tile img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  z-index: -2;
+}
+.navigation-tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #03031d80;
+  z-index: -1;
+}
+.navigation-tile span {
+  overflow-wrap: anywhere;
+}
+.navigation-tile:hover::before {
+  background: #03031da6;
+}
+.card-frame {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--site-border);
+  border-radius: var(--site-radius);
+  background: white;
+  overflow: hidden;
+  min-width: 0;
+}
+.card-frame-body {
+  padding: clamp(1.2rem, 3vw, 1.6rem);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.card-frame h2,
+.card-frame h3 {
+  font-size: 1.4rem;
+  line-height: 1.3;
+  font-weight: 750;
+}
+.card-frame-body > p {
+  margin-block: 0.5rem;
+}
+.card-frame-body > img {
+  width: 100%;
+  height: 12rem;
+  object-fit: cover;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+}
+.card-frame-footer {
+  margin-top: auto;
+}
+.card-action {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 3.25rem;
+  padding: 0.8rem 1.2rem;
+  background: var(--color-bulsca-blue);
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+}
+.card-action:hover {
+  background: var(--color-bulsca-red);
+}
+.card-date,
+.card-location {
+  color: var(--site-muted);
+  font-size: 0.95rem;
+}
+.competition-status {
+  margin-top: auto;
+  padding-top: 1.3rem;
+  font-weight: 650;
+}
+.competition-status a,
+.competition-status p {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.competition-status--unavailable {
+  color: var(--color-bulsca-red);
+}
+.action-button {
+  min-height: 2.75rem;
+  font-weight: 700;
+  text-align: center;
+  background: var(--color-bulsca-blue);
+  color: white;
+  border-radius: var(--site-radius);
+}
+.action-button:hover:not(:disabled) {
+  background: var(--color-bulsca-red);
+}
+.action-button--light {
+  background: white;
+  color: var(--color-bulsca-blue);
+}
+.action-button--light:hover {
+  color: white;
+}
+.form-control {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.8rem;
+  border: 1px solid #969aad;
+  border-radius: 0.3rem;
+  background: white;
+  color: var(--site-ink);
+  font: inherit;
+}
+.form-label {
+  font-weight: 700;
+}
+.championship-band {
+  background-color: var(--campaign-primary);
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--campaign-primary) 0,
+    var(--campaign-primary) 12rem,
+    var(--campaign-secondary) 12rem,
+    var(--campaign-secondary) 24rem
+  );
+}
+.championship-content {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+  text-align: center;
+}
+.championship-identity h2 {
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+  background: #0009;
+  padding: 1rem;
+  border-radius: var(--site-radius);
+}
+.championship-identity img {
+  width: min(100%, 16rem);
+  max-height: 15rem;
+  object-fit: contain;
+  margin: auto;
+  background: white;
+  border-radius: var(--site-radius);
+  padding: 1rem;
+}
+.championship-copy {
+  background: #0009;
+  padding: 1.5rem;
+  border-radius: var(--site-radius);
+  overflow-wrap: anywhere;
+}
+.championship-copy h2,
+.championship-dates {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  line-height: 1.2;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+.championship-location {
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  margin-block: 1rem;
+}
+.site-footer {
+  background: var(--color-bulsca-blue);
+  color: white;
+  padding-top: var(--space-section);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: start;
+}
+.mailing-list {
+  min-width: 0;
+  border-radius: var(--site-radius);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  background: white;
+  color: var(--site-ink);
+  box-shadow: 0 3px 15px #0002;
+}
+.mailing-list h2 {
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+}
+.mailing-form {
+  display: grid;
+  gap: 0.9rem;
+  min-width: 0;
+}
+.mailing-consent {
+  line-height: 1.7;
+  font-size: 0.85rem;
+}
+.mailing-list [role='status'] {
+  margin-top: 1rem;
+}
+.footer-links {
+  text-align: center;
+  padding-block: 0.5rem;
+}
+.footer-links a {
+  color: white;
+  text-decoration: none;
+}
+.footer-links a:hover {
+  text-decoration: underline;
+}
+.footer-quick-links h3 {
+  font-size: 1.4rem;
+}
+.footer-quick-links a {
+  display: block;
+  padding: 0.5rem;
+  min-height: 2.75rem;
+}
+.footer-social-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding-block: 1.5rem;
+}
+.footer-social-links img {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+}
+.article-copy {
+  max-width: 85ch;
+  margin-block: 2rem;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.article-copy p,
+.article-copy ul,
+.article-copy ol,
+.article-copy blockquote,
+.article-copy figure {
+  margin-block: 1rem;
+}
+.article-copy h2,
+.article-copy h3 {
+  margin-top: 2rem;
+  line-height: 1.25;
+}
+.article-copy img {
+  max-width: 100%;
+  height: auto;
+}
+.article-copy ul {
+  padding-left: 1.5rem;
+  list-style: disc;
+}
+.article-copy ol {
+  padding-left: 1.5rem;
+  list-style: decimal;
+}
+.article-copy pre,
+.article-copy table {
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+.article-card {
+  margin-block: 1.5rem;
+}
+@media (min-width: 768px) {
+  .icon-text-row {
+    flex-direction: row;
+    text-align: left;
+    justify-content: center;
+    gap: 3rem;
+  }
+  .icon-text-row--reverse > .site-icon {
+    order: 1;
+  }
+  .navigation-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+  }
+  .championship-content {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    text-align: left;
+  }
+  .championship-identity h2 {
+    text-align: center;
+  }
+  .footer-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}

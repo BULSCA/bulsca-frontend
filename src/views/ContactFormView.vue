@@ -67,13 +67,13 @@ onBeforeUnmount(() => { alive = false; controller?.abort() })
     <form class="contact-form" novalidate :aria-busy="pending" @submit.prevent="submit">
       <fieldset :disabled="pending">
         <legend>Your enquiry</legend>
-        <label for="department">Department</label><select id="department" v-model="form.department"><option v-for="item in departments" :key="item.id" :value="item.id">{{ item.label }}</option></select>
+        <label for="department">Department</label><select class="form-control" id="department" v-model="form.department"><option v-for="item in departments" :key="item.id" :value="item.id">{{ item.label }}</option></select>
         <template v-for="field in ['name', 'email', 'subject'] as const" :key="field">
           <label :for="field">{{ field === 'name' ? 'Your name' : field === 'email' ? 'Email address' : 'Subject' }}</label>
-          <input :id="field" v-model="form[field]" :type="field === 'email' ? 'email' : 'text'" :maxlength="field === 'email' ? 320 : 255" required :autocomplete="field === 'subject' ? 'off' : field" :aria-invalid="!!fields[field]" :aria-describedby="fields[field] ? `${field}-error` : undefined" />
+          <input class="form-control" :id="field" v-model="form[field]" :type="field === 'email' ? 'email' : 'text'" :maxlength="field === 'email' ? 320 : 255" required :autocomplete="field === 'subject' ? 'off' : field" :aria-invalid="!!fields[field]" :aria-describedby="fields[field] ? `${field}-error` : undefined" />
           <p v-if="fields[field]" :id="`${field}-error`" class="field-error">{{ fields[field] }}</p>
         </template>
-        <label for="message">Message</label><textarea id="message" v-model="form.message" required maxlength="5000" rows="8" :aria-invalid="!!fields.message" aria-describedby="message-help message-error" />
+        <label for="message">Message</label><textarea class="form-control" id="message" v-model="form.message" required maxlength="5000" rows="8" :aria-invalid="!!fields.message" aria-describedby="message-help message-error" />
         <small id="message-help">{{ form.message.length }} / 5000 characters</small><p id="message-error" class="field-error">{{ fields.message }}</p>
         <ContactVerification v-if="!previewMode && configData?.data.turnstile_site_key" :key="verificationKey" :sitekey="configData.data.turnstile_site_key" @token="token = $event" />
         <button type="submit" class="action-button" :disabled="pending || !canSubmit">{{ pending ? 'Sending…' : previewMode ? 'Preview submission' : 'Send message' }}</button>

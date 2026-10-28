@@ -69,7 +69,14 @@ describe('public API contracts and consumers', () => {
     expect(preview).toEqual(live)
     expect(preview.banner_overrides['/welfare']).toBe('preview-welfare')
     expect(preview.campaigns[0]!.description).toContain('Sample campaign')
+    expect(preview.championship_campaign?.title).toBe('Champs 2027')
     expect(read).toHaveBeenCalledTimes(1)
+  })
+  it('supports competition result links while accepting existing entry contracts', () => {
+    const results = previewResponse('competitions', {}, {}) as { data: Array<{ results_link?: { label: string; url: string } }> }
+    expect(isCollection(results)).toBe(true)
+    expect(results.data[1]?.results_link?.url).toBe('/resources/view/sample-entry-pack')
+    expect(isCollection({ data: [], meta: { current_page: 1, last_page: 1, total: 0 } })).toBe(true)
   })
   it('does not replay failed writes or accept an unconfirmed success', async () => {
     const post = vi.spyOn(apiClient, 'post').mockResolvedValueOnce({ data: { unexpected: true } })
