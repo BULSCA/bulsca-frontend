@@ -1,28 +1,81 @@
-name: Frontend tests
+name: CI
 
 on:
-  push:
-    branches: ['CODEX/**']
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+  push:
+    branches: [main, 'release/**']
+  merge_group:
 
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  frontend-tests:
-    runs-on: ubuntu-latest
+  frontend-checks:
+    name: Frontend checks
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: '24'
           cache: npm
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm run test:run
-      - name: Check application, tests and tooling types without emitting output
+      - name: TypeScript without emitting assets
         run: |
           node_modules/.bin/vue-tsc --noEmit -p tsconfig.app.json
           node_modules/.bin/vue-tsc --noEmit -p tsconfig.vitest.json
           node_modules/.bin/vue-tsc --noEmit -p tsconfig.node.json
       - run: npm run lint:check
+  frontend-browser:
+    name: Frontend browser acceptance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Chrome, preview and live acceptance without a build
+        run: bash scripts/ci-browser.sh
+      - name: Save browser evidence and server logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: frontend-browser-evidence
+          path: node_modules/.cache/bulsca-browser/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
+  required:
+    name: Required CI
+    if: ${{ always() }}
+    needs: [frontend-checks, frontend-browser]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Require every prerequisite job to succeed
+        env:
+          CHECK_RESULTS: ${{ toJSON(needs) }}
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, sys
+          results = json.loads(os.environ['CHECK_RESULTS'])
+          failures = {name: job['result'] for name, job in results.items() if job['result'] != 'success'}
+          print(json.dumps(results, indent=2))
+          if not results or failures:
+              print('Required jobs did not all succeed:', failures)
+              sys.exit(1)
+          PYTHON
