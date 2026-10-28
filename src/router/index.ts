@@ -1,39 +1,10 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-
-
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView,
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-    },
-    {
-      path: '/landing',
-      name: 'landing',
-      component: () => import('../views/LandingView.vue'),
-    },
-    {
-      path: '/latest',
-      name: 'latest',
-      component: () => import('../views/LatestView.vue'),
-    },
-
-    { path: '/article/:slug', name: 'article', component: () => import('../views/ArticleView.vue') },
-    { path: '/articles/tag/:tag', redirect: to => ({ path: '/latest', query: { tag: String(to.params.tag) } }) },
-    { path: '/articles/:slug', redirect: to => ({ name: 'article', params: { slug: to.params.slug } }) },
-    { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('../views/NotFoundView.vue') },
-  ],
-})
-
-export default router
+import { createRouter, createWebHistory, type RouterHistory } from 'vue-router'
+import { routes } from './routes'
+export function createSiteRouter(history?: RouterHistory) {
+  const router = createRouter({ history: history || createWebHistory(import.meta.env.BASE_URL), routes,
+    ...(!history ? { scrollBehavior: (_to: unknown, _from: unknown, saved: { left: number; top: number } | null) => saved || { top: 0 } } : {}),
+  })
+  router.afterEach(to => { if (typeof document !== 'undefined') document.title = `${String(to.meta.title || 'BULSCA')} | BULSCA` })
+  return router
+}
+export default createSiteRouter()

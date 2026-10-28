@@ -21,6 +21,9 @@ const defaultQuick: LinkItem[] = [
   { label: 'Contact', to: '/contact' },
   { label: 'Welfare', to: '/welfare' },
   { label: 'Privacy Policy', to: '/privacy-policy' },
+  { label: 'Cookies', to: '/cookies' },
+  { label: 'Terms', to: '/terms-of-service' },
+  { label: 'Data deletion', to: '/data-deletion' },
   { label: 'Scoring.Events', href: `https://scoring.events?ref=${hostEncoded}`, external: true }
 ]
 

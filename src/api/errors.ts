@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export type FailureKind = 'network' | 'server' | 'invalid_response' | 'not_found' | 'forbidden' | 'session' | 'validation' | 'rate_limited'
 export class ApiFailure extends Error {
-  constructor(public kind: FailureKind, message: string, public status?: number, public requestId?: string, public retryAfter?: number) { super(message) }
+  constructor(public kind: FailureKind, message: string, public status?: number, public requestId?: string, public retryAfter?: number, public fieldErrors?: Record<string, string[]>) { super(message) }
 }
 export function normalizeFailure(error: unknown): ApiFailure {
   if (error instanceof ApiFailure) return error
@@ -16,7 +16,14 @@ export function normalizeFailure(error: unknown): ApiFailure {
   if (status === 404) return new ApiFailure('not_found', 'This content could not be found.', status, requestId)
   if (status === 403) return new ApiFailure('forbidden', 'You do not have access to this content.', status, requestId)
   if (status === 401 || status === 419) return new ApiFailure('session', 'Your session has expired. Please sign in again.', status, requestId)
-  if (status === 422) return new ApiFailure('validation', 'Please check the submitted fields.', status, requestId)
+  if (status === 422) {
+    const fields: Record<string, string[]> = {}
+    const errors: unknown = error.response?.data?.errors
+    if (errors && typeof errors === 'object') for (const key of ['name', 'email', 'subject', 'department', 'message', 'cf-turnstile-response']) {
+      if (Object.prototype.hasOwnProperty.call(errors, key)) fields[key] = ['Please check this field.']
+    }
+    return new ApiFailure('validation', 'Please check the submitted fields.', status, requestId, undefined, fields)
+  }
   if (status === 429) return new ApiFailure('rate_limited', 'Too many requests. Please wait before trying again.', status, requestId, retryAfter)
   return new ApiFailure(status ? 'server' : 'network', 'This content is temporarily unavailable. Please try again.', status, requestId)
 }

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { onErrorCaptured, ref } from 'vue'
+import { onErrorCaptured, ref, watch } from 'vue'
 import { reportError } from '@/services/diagnostics'
-const props = withDefaults(defineProps<{ routeTemplate?: string }>(), { routeTemplate: '/unknown' })
+const props = withDefaults(defineProps<{ routeTemplate?: string; resetKey?: string }>(), { routeTemplate: '/unknown' })
 const failed = ref(false)
 const version = ref(0)
 onErrorCaptured(() => { failed.value = true; reportError('component', props.routeTemplate); return false })
 function retry() { version.value++; failed.value = false }
+watch(() => props.resetKey, () => { if (failed.value) retry() })
 </script>
 <template>
   <section v-if="failed" role="alert" class="container-responsive py-8">

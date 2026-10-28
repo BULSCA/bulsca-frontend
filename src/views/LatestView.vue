@@ -24,7 +24,9 @@ function pageQuery(value: number) { return { ...route.query, page: String(value)
 </script>
 <template>
   <PageBanner title="Latest" subtitle="News" background-image="/storage/photos/DSC_0335.jpg" />
-  <main class="container-responsive" :aria-busy="loading">
+  <main id="main-content" class="public-page" :aria-busy="loading">
+    <h1>Latest news</h1>
+    <p>Announcements and updates from the university lifesaving community.</p>
     <p v-if="tag" class="my-4">Tag: {{ tag }} <RouterLink to="/latest">Clear filter</RouterLink></p>
     <RequestError v-if="error" :error="error" :stale="!!data" :busy="loading" @retry="load" />
     <p v-if="error && data">Previous results may not reflect your latest filter or page selection.</p>

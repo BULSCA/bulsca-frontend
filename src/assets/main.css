@@ -5,6 +5,7 @@
 @import "./css/nav";
 @import "./css/container";
 @import "./css/header";
+@import "./css/public";
 
 @theme {
   --font-sans: 'Lato', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;

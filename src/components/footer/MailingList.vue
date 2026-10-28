@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { previewMode } from '@/config'
 const props = defineProps<{
   action?: string
   placeholder?: string
@@ -6,12 +8,14 @@ const props = defineProps<{
 
 const action = props.action ?? 'https://bulsca.us15.list-manage.com/subscribe/post?u=1b1c9887c1e5ff377f6979e66&id=94c67a5f8d&f_id=00738de0f0'
 const placeholder = props.placeholder ?? 'swimming@bulsca.co.uk'
+const previewSubmitted = ref(false)
+function submit(event: Event) { if (previewMode) { event.preventDefault(); previewSubmitted.value = true } }
 </script>
 
 <template>
   <div class="w-full md:flex-[2] self-stretch rounded-lg p-6 bg-white shadow-md">
     <h2 class="header">Join the mailing list</h2>
-    <form :action="action" method="post" class="flex flex-col overflow-hidden">
+    <form :action="previewMode ? undefined : action" method="post" class="flex flex-col overflow-hidden" @submit="submit">
       <input
         name="EMAIL"
         type="email"
@@ -26,5 +30,6 @@ const placeholder = props.placeholder ?? 'swimming@bulsca.co.uk'
       </small>
       <button type="submit" class="btn">Sign me up!</button>
     </form>
+    <p v-if="previewSubmitted" role="status">Preview only: no mailing-list subscription was submitted.</p>
   </div>
 </template>

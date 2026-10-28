@@ -1,5 +1,7 @@
 import { read } from '../client'
 import type { Article, ArticleList, ArticleResponse } from './types'
+import { previewMode } from '@/config'
+import { ApiFailure } from '../errors'
 
 const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object'
 export function isArticle(value: unknown): value is Article {
@@ -26,11 +28,27 @@ export function isArticleResponse(value: unknown): value is ArticleResponse {
   const content = value.data.content
   return isArticle(value.data) && typeof content === 'string'
 }
-export function getArticles(signal: AbortSignal, page = 1, tag = ''): Promise<ArticleList> {
+export async function getArticles(signal: AbortSignal, page = 1, tag = ''): Promise<ArticleList> {
+  signal.throwIfAborted()
+  if (previewMode) {
+    const { previewArticles } = await import('@/preview/data')
+    signal.throwIfAborted()
+    const result: unknown = structuredClone(previewArticles(page, tag))
+    if (!isArticleList(result)) throw new ApiFailure('invalid_response', 'Preview news is unavailable.')
+    return result
+  }
   const params = new URLSearchParams({ page: String(page) })
   if (tag) params.set('tag', tag)
   return read(`/articles?${params}`, isArticleList, signal, '/latest')
 }
-export function getArticleBySlug(signal: AbortSignal, slug: string): Promise<ArticleResponse> {
+export async function getArticleBySlug(signal: AbortSignal, slug: string): Promise<ArticleResponse> {
+  signal.throwIfAborted()
+  if (previewMode) {
+    const { previewArticle } = await import('@/preview/data')
+    signal.throwIfAborted()
+    const result: unknown = structuredClone(previewArticle(slug))
+    if (!isArticleResponse(result)) throw new ApiFailure('not_found', 'This sample article could not be found.', 404)
+    return result
+  }
   return read(`/articles/${encodeURIComponent(slug)}`, isArticleResponse, signal, '/article/:slug')
 }

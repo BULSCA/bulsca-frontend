@@ -19,10 +19,11 @@ watch(() => route.params.slug, async () => {
 }, { immediate: true })
 </script>
 <template>
-  <main class="container-responsive py-8" :aria-busy="loading">
+  <main id="main-content" class="public-page" :aria-busy="loading">
     <RouterLink to="/latest">Back to news</RouterLink>
     <RequestError v-if="error" :error="error" :stale="!!data" :busy="loading" @retry="load" />
     <p v-if="loading && !data" role="status">Loading article…</p>
+    <h1 v-if="!data">Article</h1>
     <article v-if="data" class="prose max-w-none py-6">
       <h1>{{ data.data.title }}</h1>
       <p>{{ formatDateAuthor(data.data.created_at, data.data.author) }}</p>

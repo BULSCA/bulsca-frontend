@@ -1,9 +1,10 @@
-import axios from 'axios'
+import axios, { type AxiosInstance } from 'axios'
+import { websiteApiBase } from '@/config'
 import { ApiFailure, normalizeFailure } from './errors'
 import { reportError } from '@/services/diagnostics'
 
 const apiClient = axios.create({
-  baseURL: '/api/v1',
+  baseURL: websiteApiBase,
   timeout: 8000,
   headers: { Accept: 'application/json' },
 })
@@ -18,10 +19,10 @@ function wait(delay: number, signal: AbortSignal): Promise<void> {
 }
 
 /** Read-only retry policy. Mutations use apiClient directly and are never replayed. */
-export async function read<T>(path: string, valid: (value: unknown) => value is T, signal: AbortSignal, routeTemplate: string): Promise<T> {
+export async function read<T>(path: string, valid: (value: unknown) => value is T, signal: AbortSignal, routeTemplate: string, client: AxiosInstance = apiClient): Promise<T> {
   for (let attempt = 0; ; attempt++) {
     try {
-      const response = await apiClient.get<unknown>(path, { signal })
+      const response = await client.get<unknown>(path, { signal })
       if (!valid(response.data)) throw new ApiFailure('invalid_response', 'This content could not be loaded. Please try again.')
       return response.data
     } catch (error) {

@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import logoUrl from '@/assets/blogo.png'
 const props = withDefaults(
   defineProps<{
     title?: string
@@ -35,11 +36,11 @@ const props = withDefaults(
   {
     title: '',
     subtitle: '',
-    logo: '@/assets/blogo.png',
+    logo: logoUrl,
     height: 'h-[40vh]',
     snowContainer: false,
     backgroundImage: null,
-    backgroundOverlay: 'rgba(0, 0, 0, 0)',
+    backgroundOverlay: 'rgba(7, 6, 96, 0.8)',
   }
 )
 </script>

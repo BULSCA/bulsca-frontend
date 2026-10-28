@@ -1,0 +1,5 @@
+export const previewMode = import.meta.env.VITE_PUBLIC_DATA_MODE === 'preview'
+export const websiteApiBase = import.meta.env.VITE_WEBSITE_API_URL || '/api/v1'
+export const competitionApiBase = import.meta.env.VITE_COMPETITION_API_URL || '/api/v1'
+const candidate = import.meta.env.VITE_PORTAL_URL || 'https://portal.bulsca.co.uk'
+export const portalUrl = /^https?:\/\//i.test(candidate) ? candidate : 'https://portal.bulsca.co.uk'

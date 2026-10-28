@@ -1,3 +1,4 @@
+import { previewMode, websiteApiBase } from '@/config'
 type Category = 'network' | 'server' | 'invalid_response' | 'component' | 'route' | 'unhandled'
 type Report = { app: 'public'; app_version: string; event_id: string; category: Category; message: string; route_template: string; status?: number; request_id?: string }
 type Queued = { report: Report; time: number }
@@ -10,6 +11,7 @@ const lifetime = 30 * 60 * 1000
 
 // Memory-only. No raw exception text, URLs, credentials or form data are accepted.
 export function reportError(category: Category, routeTemplate = '/unknown', status?: number, requestId?: string) {
+  if (previewMode) return
   try {
     const route = /^\/[a-zA-Z0-9_/:{}-]{0,127}$/.test(routeTemplate) ? routeTemplate : '/unknown'
     const id = requestId && /^[0-9a-f-]{36}$/i.test(requestId) ? requestId : undefined
@@ -45,7 +47,7 @@ export async function flushReports() {
       const timeout = setTimeout(() => controller.abort(), 5000)
       try {
         // Independent transport: failures here cannot re-enter API error reporting.
-        const response = await fetch('/api/v1/client-errors', {
+        const response = await fetch(`${websiteApiBase.replace(/\/$/, '')}/client-errors`, {
           method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify(entry.report), signal: controller.signal,
         })
