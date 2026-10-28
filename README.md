@@ -148,3 +148,11 @@ google-chrome --headless=new --remote-debugging-address=127.0.0.1 --remote-debug
 To verify unavailable live APIs, start a second dev server with `VITE_PUBLIC_DATA_MODE=live npm run dev -- --host 127.0.0.1 --port 5174`, then run `npm run test:browser -- --live`. API responses are intercepted locally to simulate 404/500/503, invalid payloads, recovery and reconnection; telemetry is captured rather than sent to a backend. The runner accepts loopback origins only and does not submit live forms. Run preview and live checks sequentially so each tab retains visibility for carousel tests.
 
 Unknown routes have a dedicated not-found screen. Missing APIs retain page headings, related navigation and recovery messages. Unavailable optional widgets do not hide static content. Legal information that was absent from the source has an explicit unavailable notice instead of invented policy text.
+
+## Pull request checks
+
+`.github/workflows/tests.yml` runs on every PR (including drafts and retargeting), pushes to main/release branches, and merge queues. `Required CI` succeeds only if both unit/type/lint checks and complete Chrome acceptance succeed; failures, cancellations and skipped prerequisites fail the gate. Browser logs, screenshots and reports are retained for seven days.
+
+Run `bash scripts/ci-browser.sh` after installing dependencies to start isolated Chrome plus preview/live Vite servers and run both acceptance suites. It requires Node 24 and Google Chrome (`CHROME_BIN` may override the executable). Ports 9222, 5173 and 5174 must be available. Startup failures fail the command and child processes are cleaned up. No production assets are built.
+
+GitHub rulesets require PRs and an up-to-date `Required CI` from GitHub Actions on the default branch and `release/` branches, including nested release names. There are no bypass actors or required human approvals; force pushes and branch deletion are blocked. These settings live in GitHub, independently of workflow files. Existing PRs without the workflow remain blocked until updated; do not bypass the gate to merge them. CODEX development branches remain pushable.

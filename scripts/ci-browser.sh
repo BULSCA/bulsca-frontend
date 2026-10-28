@@ -30,16 +30,21 @@ live_pid=$!
 
 wait_for() {
   local endpoint="$1"
+  local server_pid="$2"
   for attempt in {1..60}; do
-    if curl --fail --silent "$endpoint" >/dev/null; then return; fi
+    if ! kill -0 "$server_pid" 2>/dev/null; then
+      echo "Server process $server_pid exited before $endpoint was ready" >&2
+      return 1
+    fi
+    if curl --fail --silent --max-time 2 "$endpoint" >/dev/null; then return; fi
     sleep 1
   done
   echo "Timed out waiting for $endpoint" >&2
   return 1
 }
-wait_for http://127.0.0.1:9222/json/version
-wait_for http://127.0.0.1:5173/
-wait_for http://127.0.0.1:5174/
+wait_for http://127.0.0.1:9222/json/version "$chrome_pid"
+wait_for http://127.0.0.1:5173/ "$preview_pid"
+wait_for http://127.0.0.1:5174/ "$live_pid"
 npm run test:browser
 npm run test:browser -- --live
 node --input-type=module - <<'JS'
