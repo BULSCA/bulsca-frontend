@@ -5,13 +5,16 @@ import LatestView from '../LatestView.vue'
 import ArticleView from '../ArticleView.vue'
 import { getArticles, getArticleBySlug } from '@/api/articles/articles'
 import { ApiFailure } from '@/api/errors'
+import { recordView } from '@/api/articles/interactions'
 import { article, articleList } from '@/test/fixtures'
 vi.mock('@/api/articles/articles', () => ({
   getArticles: vi.fn<typeof import('@/api/articles/articles').getArticles>(),
   getArticleBySlug: vi.fn<typeof import('@/api/articles/articles').getArticleBySlug>(),
 }))
 afterEach(() => vi.resetAllMocks())
+vi.mock('@/api/articles/interactions', () => ({ recordView: vi.fn<typeof import('@/api/articles/interactions').recordView>().mockResolvedValue({ views: 1, thumbs_up: 0, thumbs_down: 0 }), rateArticle: vi.fn<typeof import('@/api/articles/interactions').rateArticle>() }))
 async function screen(path = '/latest') {
+  vi.mocked(recordView).mockResolvedValue({ views: 1, thumbs_up: 0, thumbs_down: 0 })
   const router = createRouter({ history: createMemoryHistory(), routes: [
     { path: '/latest', component: LatestView }, { path: '/article/:slug', name: 'article', component: ArticleView },
   ] })
@@ -22,6 +25,13 @@ async function screen(path = '/latest') {
   return { wrapper, router }
 }
 describe('public news screens', () => {
+  it('retains the actual article title after a canonical slug redirect', async () => {
+    vi.mocked(getArticleBySlug).mockResolvedValue({ data: { ...article(), slug: 'canonical-news.1', content: '<p>Published</p>' } })
+    const { router } = await screen('/article/old-title.1')
+    await flushPromises()
+    expect(router.currentRoute.value.params.slug).toBe('canonical-news.1')
+    expect(document.title).toBe('Rescue news | BULSCA')
+  })
   it('renders canonical links, URL tag filters and pagination', async () => {
     vi.mocked(getArticles).mockResolvedValue(articleList())
     const { wrapper, router } = await screen('/latest?tag=competition')
@@ -66,9 +76,11 @@ describe('public news screens', () => {
       .mockRejectedValueOnce(new ApiFailure('server', 'Unavailable'))
     const { wrapper, router } = await screen('/article/rescue-news.1')
     expect(wrapper.text()).toContain('Safe content')
+    expect(document.title).toBe('Rescue news | BULSCA')
     await router.push('/article/different.2')
     await flushPromises()
     expect(wrapper.text()).not.toContain('Safe content')
+    expect(document.title).toBe('Article | BULSCA')
     expect(wrapper.text()).toContain('Unavailable')
   })
 })

@@ -4,7 +4,7 @@ import { ApiFailure, normalizeFailure } from '../errors'
 import { competitionApiBase, previewMode } from '@/config'
 import { reportError } from '@/services/diagnostics'
 import contract from './contract.json'
-import { isAccess, isCollection, isContactConfig, isDocumentResponse, isReceipt } from './validation'
+import { isAccess, isCollection, isContactConfig, isDocumentResponse, isReceipt, isSection, object } from './validation'
 import type { ContactSubmission } from './types'
 import { isPresentationEnvelope, parsePresentation } from '../presentation'
 
@@ -38,6 +38,7 @@ export const getDocument = (endpoint: DetailEndpoint, signal: AbortSignal, param
 export const getResourceAccess = (signal: AbortSignal, id: string) => request('resource-access', isAccess, signal, { id })
 export const getContactConfig = (signal: AbortSignal) => request('contact-config', isContactConfig, signal)
 export const getPresentation = async (signal: AbortSignal) => parsePresentation(await request('presentation', isPresentationEnvelope, signal))!
+export const getNotice = (signal: AbortSignal) => request('notice', (value: unknown): value is { data: import('./types').ContentSection | null } => object(value) && (value.data === null || isSection(value.data)), signal)
 export async function submitContact(payload: ContactSubmission, signal: AbortSignal) {
   signal.throwIfAborted()
   if (previewMode) return { data: { message: 'Preview only: your message was not sent.' } }
@@ -48,7 +49,10 @@ export async function submitContact(payload: ContactSubmission, signal: AbortSig
   } catch (error) {
     if (signal.aborted || axios.isCancel(error)) throw new DOMException('Request cancelled', 'AbortError')
     const failure = normalizeFailure(error)
-    if (failure.kind === 'server' || failure.kind === 'network' || failure.kind === 'invalid_response') reportError(failure.kind, '/contact-form', failure.status, failure.requestId)
+    if (failure.kind === 'server' || failure.kind === 'network' || failure.kind === 'invalid_response') {
+      reportError(failure.kind, '/contact-form', failure.status, failure.requestId)
+      throw new ApiFailure(failure.kind, 'We could not confirm delivery. Please contact the department directly before sending again.', failure.status, failure.requestId)
+    }
     throw failure
   }
 }

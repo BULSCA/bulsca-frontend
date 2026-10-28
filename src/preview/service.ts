@@ -2,6 +2,7 @@ import { ApiFailure } from '@/api/errors'
 import type { PublicCollection, PublicDocument, PublicEntry } from '@/api/public/types'
 import * as data from './data'
 import { previewPresentation } from '@/content/presentation'
+import archives from '@/content/championships.json'
 
 function find(entries: PublicEntry[], slug: string) {
   const found = entries.find(item => item.slug === slug || String(item.id) === slug)
@@ -26,6 +27,7 @@ export function previewResponse(endpoint: string, params: Record<string, string>
   let item: PublicDocument
   switch (endpoint) {
     case 'presentation': return { data: previewPresentation }
+    case 'notice': return { data: null }
     case 'club': item = data.document(find(data.clubs, params.slug!), { entries: data.competitions, links: [{ label: 'Contact this sample club', url: '/contact-form?department=recruitment' }] }); break
     case 'committee': item = data.document(find(data.committees, season), { sections: [], entries: data.members(season) }); break
     case 'member': find(data.committees, season); item = data.document(find(data.members(season), params.slug!), {
@@ -34,7 +36,7 @@ export function previewResponse(endpoint: string, params: Record<string, string>
       links: [{ label: 'Contact the committee', url: '/contact' }],
     }); break
     case 'competition': item = data.document(find(data.competitions, params.slug!), { entries: data.resources, links: [{ label: 'League standings', url: '/competitions/league' }, { label: 'Scoring.events', url: 'https://scoring.events' }] }); break
-    case 'championship': item = data.document(find(data.championships, params.year!), { entries: data.resources }); break
+    case 'championship': item = data.document(find(data.championships, params.year!), { ...archives[params.year as keyof typeof archives], entries: data.resources }); break
     case 'league': item = data.document(find(data.seasons, season), { entries: data.competitions,
       table: { caption: 'Sample league standings', columns: ['Position', 'Club', 'Competitions', 'Points'], rows: [[1, 'Example University', 2, 20], [2, 'Coastal University', 2, 18]] } }); break
     case 'resource-page': item = data.document(find(data.resourcePages, params.slug!), { entries: data.resources }); break

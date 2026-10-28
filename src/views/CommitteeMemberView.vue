@@ -10,6 +10,7 @@ import ContentSections from '@/components/ContentSections.vue'
 import PublicCards from '@/components/PublicCards.vue'
 import RequestError from '@/components/RequestError.vue'
 import SafeLink from '@/components/SafeLink.vue'
+import { usePageMetadata } from '@/composables/usePageMetadata'
 const route = useRoute()
 const { data, error, loading, execute, clear } = useApi((signal: AbortSignal) =>
   getDocument('member', signal, {
@@ -18,6 +19,7 @@ const { data, error, loading, execute, clear } = useApi((signal: AbortSignal) =>
   }),
 )
 const member = computed(() => data.value?.data)
+usePageMetadata(() => member.value?.title || 'Committee member')
 const role = computed(
   () => member.value?.role_label || member.value?.tags?.[0] || 'Committee member',
 )

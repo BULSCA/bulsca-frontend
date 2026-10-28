@@ -12,7 +12,7 @@ export function isEntry(v: unknown): v is PublicEntry {
     && (v.results_link === undefined || isLink(v.results_link))
 }
 export function isSection(v: unknown): v is ContentSection {
-  return object(v) && typeof v.heading === 'string' && strings(v.paragraphs) && (v.bullets === undefined || strings(v.bullets))
+  return object(v) && typeof v.heading === 'string' && strings(v.paragraphs) && (v.bullets === undefined || strings(v.bullets)) && (v.html === undefined || typeof v.html === 'string')
 }
 export function isTable(v: unknown): v is ContentTable {
   return object(v) && typeof v.caption === 'string' && strings(v.columns) && Array.isArray(v.rows)
@@ -20,16 +20,23 @@ export function isTable(v: unknown): v is ContentTable {
 }
 export function isDocument(v: unknown): v is PublicDocument {
   if (!object(v)) return false
-  const { sections, entries, table, downloadable } = v
+  const { sections, entries, table, downloadable, tables, images, role_sections } = v
   return isEntry(v) && Array.isArray(sections) && sections.every(isSection)
     && (entries === undefined || (Array.isArray(entries) && entries.every(isEntry)))
     && (table === undefined || isTable(table)) && (downloadable === undefined || typeof downloadable === 'boolean')
-    && (v.role_sections === undefined || (Array.isArray(v.role_sections) && v.role_sections.every(isSection)))
+    && (tables === undefined || (Array.isArray(tables) && tables.every(isTable)))
+    && (images === undefined || (Array.isArray(images) && images.every(isLink)))
+    && (role_sections === undefined || (Array.isArray(role_sections) && role_sections.every(isSection)))
 }
 export function isCollection(v: unknown): v is PublicCollection {
   if (!object(v) || !object(v.meta)) return false
   const meta = v.meta
   return Array.isArray(v.data) && v.data.every(isEntry)
+    && (v.stale === undefined || typeof v.stale === 'boolean')
+    && (v.filters === undefined || (object(v.filters)
+      && ['tags', 'locations'].every(key => v.filters && object(v.filters) && (v.filters[key] === undefined || strings(v.filters[key])))
+      && (v.filters.years === undefined || (Array.isArray(v.filters.years) && v.filters.years.every(Number.isSafeInteger)))
+      && (v.filters.groups === undefined || (Array.isArray(v.filters.groups) && v.filters.groups.every(group => object(group) && Number.isSafeInteger(group.id) && typeof group.name === 'string')))))
     && ['current_page', 'last_page', 'total'].every(key => typeof meta[key] === 'number' && Number.isSafeInteger(meta[key]))
     && Number(meta.current_page) >= 1 && Number(meta.last_page) >= 1 && Number(meta.total) >= 0
 }

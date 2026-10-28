@@ -6,9 +6,12 @@ import { getArticleBySlug } from '@/api/articles/articles'
 import { useApi } from '@/composables/useApi'
 import { formatDateAuthor } from '@/composables/useArticleFormatting'
 import RequestError from '@/components/RequestError.vue'
+import ArticleActions from '@/components/ArticleActions.vue'
+import { usePageMetadata, defaultDescription } from '@/composables/usePageMetadata'
 const route = useRoute()
 const router = useRouter()
 const { data, error, loading, execute, clear } = useApi(getArticleBySlug)
+usePageMetadata(() => data.value?.data.title || 'Article', () => data.value?.data.excerpt || defaultDescription)
 const load = () => execute(String(route.params.slug))
 watch(() => route.params.slug, async () => {
   if (data.value?.data.slug === route.params.slug) return
@@ -30,6 +33,7 @@ watch(() => route.params.slug, async () => {
       <nav v-if="data.data.tags.length" aria-label="Article tags" class="mt-6 flex gap-3">
         <RouterLink v-for="tag in data.data.tags" :key="tag.id" :to="{ path: '/latest', query: { tag: tag.slug } }">{{ tag.name }}</RouterLink>
       </nav>
+      <ArticleActions :article="data.data" />
     </article>
   </PageLayout>
 </template>

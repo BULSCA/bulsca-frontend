@@ -7,6 +7,7 @@ import ErrorBoundary from './components/ErrorBoundary.vue'
 import { reportError } from './services/diagnostics'
 import { previewMode } from './config'
 import PageLayout from './components/PageLayout.vue'
+import GlobalNotice from './components/GlobalNotice.vue'
 const route = useRoute()
 const router = useRouter()
 const routeFailed = ref(false)
@@ -17,6 +18,7 @@ router.afterEach((_to, _from, failure) => { if (!failure) routeFailed.value = fa
   <a class="skip-link" href="#main-content">Skip to content</a>
   <div v-if="previewMode" class="preview-banner" role="status">Preview — sample data. Dynamic people, clubs and results are fictional; messages are not sent. Archives and records are labelled separately. <RouterLink to="/">Explore the preview</RouterLink></div>
   <ErrorBoundary route-template="/navigation"><NavBar /></ErrorBoundary>
+  <ErrorBoundary route-template="/notice"><GlobalNotice /></ErrorBoundary>
   <PageLayout v-if="routeFailed" title="This page could not be loaded" role="alert">
     <p>Please use another navigation link or reload to try again.</p>
     <button type="button" @click="router.go(0)">Reload page</button>

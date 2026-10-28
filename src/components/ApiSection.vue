@@ -14,6 +14,7 @@ watch(() => props.endpoint, () => { clear(); void load() }, { immediate: true })
     <h2>{{ title }}</h2>
     <p v-if="loading && !data" role="status">Loading {{ title.toLowerCase() }}…</p>
     <RequestError v-if="error" :error="error" :stale="!!data" :busy="loading" @retry="load" />
+    <p v-if="data?.stale" role="status">Showing previously published updates while the provider is unavailable.</p>
     <PublicCards v-if="data?.data.length" :entries="data.data" />
     <p v-else-if="data">There are no published items here yet.</p>
   </section>

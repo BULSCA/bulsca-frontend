@@ -1,31 +1,137 @@
 {
-  "version": "draft-1",
-  "description": "Frontend integration contract, pending implementation by the owning services. Directory responses use PublicCollection; detail responses use DocumentResponse. See types.ts for the validated DTO fields.",
+  "version": "1.1.0",
+  "description": "Public API v1 consumers implemented by BULSCA/bulsca-site. Directory responses use PublicCollection; detail responses use DocumentResponse. OpenAPI in the backend owns the canonical contract.",
   "endpoints": {
-    "presentation": { "service": "website", "path": "/presentation", "response": "presentation" },
-    "highlights": { "service": "competition", "path": "/homepage/highlights", "response": "collection" },
-    "social": { "service": "website", "path": "/social/posts", "response": "collection" },
-    "clubs": { "service": "website", "path": "/clubs", "response": "collection" },
-    "club": { "service": "website", "path": "/clubs/{slug}", "response": "document" },
-    "committees": { "service": "website", "path": "/committees", "response": "collection" },
-    "committee": { "service": "website", "path": "/committees/{season}", "response": "document" },
-    "member": { "service": "website", "path": "/committees/{season}/members/{slug}", "response": "document" },
-    "competitions": { "service": "competition", "path": "/competitions", "response": "collection" },
-    "competition": { "service": "competition", "path": "/competitions/{slug}", "response": "document" },
-    "championships": { "service": "competition", "path": "/championships", "response": "collection" },
-    "championship": { "service": "competition", "path": "/championships/{year}", "response": "document" },
-    "seasons": { "service": "competition", "path": "/seasons", "response": "collection" },
-    "league": { "service": "competition", "path": "/seasons/{season}/standings", "response": "document" },
-    "resource-pages": { "service": "website", "path": "/resource-pages", "response": "collection" },
-    "resource-page": { "service": "website", "path": "/resource-pages/{slug}", "response": "document" },
-    "resources": { "service": "website", "path": "/resources", "response": "collection" },
-    "resource": { "service": "website", "path": "/resources/{id}", "response": "document" },
-    "resource-access": { "service": "website", "path": "/resources/{id}/access", "response": "access" },
-    "sercs": { "service": "website", "path": "/sercs", "response": "collection" },
-    "serc": { "service": "website", "path": "/sercs/{slug}", "response": "document" },
-    "casualties": { "service": "website", "path": "/casualties", "response": "collection" },
-    "casualty": { "service": "website", "path": "/casualties/{slug}", "response": "document" },
-    "contact-config": { "service": "website", "path": "/contact/config", "response": "contact-config" },
-    "contact-submit": { "service": "website", "path": "/contact/submissions", "method": "POST", "response": "contact-receipt" }
+    "presentation": {
+      "service": "website",
+      "path": "/presentation",
+      "response": "presentation"
+    },
+    "highlights": {
+      "service": "competition",
+      "path": "/homepage/highlights",
+      "response": "collection"
+    },
+    "social": {
+      "service": "website",
+      "path": "/social/posts",
+      "response": "collection"
+    },
+    "clubs": {
+      "service": "website",
+      "path": "/clubs",
+      "response": "collection"
+    },
+    "club": {
+      "service": "website",
+      "path": "/clubs/{slug}",
+      "response": "document"
+    },
+    "committees": {
+      "service": "website",
+      "path": "/committees",
+      "response": "collection"
+    },
+    "committee": {
+      "service": "website",
+      "path": "/committees/{season}",
+      "response": "document"
+    },
+    "member": {
+      "service": "website",
+      "path": "/committees/{season}/members/{slug}",
+      "response": "document"
+    },
+    "competitions": {
+      "service": "competition",
+      "path": "/competitions",
+      "response": "collection"
+    },
+    "competition": {
+      "service": "competition",
+      "path": "/competitions/{slug}",
+      "response": "document"
+    },
+    "championships": {
+      "service": "competition",
+      "path": "/championships",
+      "response": "collection"
+    },
+    "championship": {
+      "service": "competition",
+      "path": "/championships/{year}",
+      "response": "document"
+    },
+    "seasons": {
+      "service": "competition",
+      "path": "/seasons",
+      "response": "collection"
+    },
+    "league": {
+      "service": "competition",
+      "path": "/seasons/{season}/standings",
+      "response": "document"
+    },
+    "resource-pages": {
+      "service": "website",
+      "path": "/resource-pages",
+      "response": "collection"
+    },
+    "resource-page": {
+      "service": "website",
+      "path": "/resource-pages/{slug}",
+      "response": "document"
+    },
+    "resources": {
+      "service": "website",
+      "path": "/resources",
+      "response": "collection"
+    },
+    "resource": {
+      "service": "website",
+      "path": "/resources/{id}",
+      "response": "document"
+    },
+    "resource-access": {
+      "service": "website",
+      "path": "/resources/{id}/access",
+      "response": "access"
+    },
+    "sercs": {
+      "service": "website",
+      "path": "/sercs",
+      "response": "collection"
+    },
+    "serc": {
+      "service": "website",
+      "path": "/sercs/{slug}",
+      "response": "document"
+    },
+    "casualties": {
+      "service": "website",
+      "path": "/casualties",
+      "response": "collection"
+    },
+    "casualty": {
+      "service": "website",
+      "path": "/casualties/{slug}",
+      "response": "document"
+    },
+    "contact-config": {
+      "service": "website",
+      "path": "/contact/config",
+      "response": "contact-config"
+    },
+    "contact-submit": {
+      "service": "website",
+      "path": "/contact/submissions",
+      "method": "POST",
+      "response": "contact-receipt"
+    },
+    "notice": {
+      "service": "website",
+      "path": "/notice",
+      "response": "notice"
+    }
   }
 }

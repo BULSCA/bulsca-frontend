@@ -154,7 +154,7 @@ describe('complete public browsing in preview mode', () => {
     const { app } = await visit(path)
     expect(app.get('h1').text()).toBe('Member and management portal')
     expect(app.find('.page-banner').exists()).toBe(true)
-    expect(app.get('a[href="https://portal.bulsca.co.uk"]').text()).toContain('Open the portal')
+    expect(app.get(`a[href="https://portal.bulsca.co.uk${path}"]`).text()).toContain('Open the portal')
   })
 
   it('keeps genuinely unknown routes distinct from unavailable content', async () => {
