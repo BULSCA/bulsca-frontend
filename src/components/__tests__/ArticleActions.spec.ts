@@ -4,6 +4,8 @@ import ArticleActions from '@/components/ArticleActions.vue'
 import { recordView, rateArticle } from '@/api/articles/interactions'
 import { getArticleBySlug } from '@/api/articles/articles'
 import type { Article } from '@/api/articles/types'
+import { createSSRApp } from 'vue'
+import { renderToString } from 'vue/server-renderer'
 vi.mock('@/api/articles/interactions', () => ({ recordView: vi.fn<typeof import('@/api/articles/interactions').recordView>(), rateArticle: vi.fn<typeof import('@/api/articles/interactions').rateArticle>() }))
 vi.mock('@/api/articles/articles', () => ({ getArticleBySlug: vi.fn<typeof import('@/api/articles/articles').getArticleBySlug>() }))
 vi.mock('@/config', () => ({ previewMode: false }))
@@ -13,6 +15,12 @@ let wrapper: VueWrapper
 beforeEach(() => { vi.resetAllMocks(); vi.mocked(recordView).mockResolvedValue({ ...counters, views: 11 }) })
 afterEach(() => wrapper?.unmount())
 describe('article interactions', () => {
+  it('never records a view while rendering on the server', async () => {
+    const html = await renderToString(createSSRApp(ArticleActions, { article }))
+    expect(html).toContain('10 views')
+    expect(recordView).not.toHaveBeenCalled()
+    expect(rateArticle).not.toHaveBeenCalled()
+  })
   it('records a real visit once and keeps rating controls usable after view failure', async () => {
     vi.mocked(recordView).mockRejectedValue(new Error('unavailable'))
     wrapper = mount(ArticleActions, { props: { article } }); await flushPromises()

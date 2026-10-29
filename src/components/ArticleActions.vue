@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref, shallowRef, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { recordView, rateArticle, type ArticleCounters } from '@/api/articles/interactions'
 import { getArticleBySlug } from '@/api/articles/articles'
 import type { Article } from '@/api/articles/types'
@@ -11,7 +11,7 @@ const message = ref('')
 const uncertain = ref(false)
 let controller = new AbortController()
 let revision = 0
-watch(() => props.article.id, async () => {
+onMounted(() => watch(() => props.article.id, async () => {
   controller.abort()
   const active = new AbortController()
   controller = active
@@ -20,7 +20,7 @@ watch(() => props.article.id, async () => {
     const result = await recordView(props.article.slug, crypto.randomUUID(), active.signal)
     if (!active.signal.aborted && revision === 0) counters.value = result
   } catch { /* Best-effort view reporting never blocks the article or rating controls. */ }
-}, { immediate: true })
+}, { immediate: true }))
 async function vote(type: 'up' | 'down') {
   if (pending.value || uncertain.value) return
   const active = controller
