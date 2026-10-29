@@ -5,7 +5,7 @@
 # BULSCA public website
 
 [![Release tests](https://github.com/BULSCA/bulsca-frontend/actions/workflows/tests.yml/badge.svg?branch=release%2Fpublic-site-v1&event=push)](https://github.com/BULSCA/bulsca-frontend/actions/workflows/tests.yml?query=branch%3Arelease%2Fpublic-site-v1)
-[![Coverage reports](https://img.shields.io/badge/coverage-reports-blue)](https://github.com/BULSCA/bulsca-frontend/actions/workflows/tests.yml?query=branch%3Arelease%2Fpublic-site-v1)
+[![Line coverage snapshot: 94.06%](https://img.shields.io/badge/line_coverage_snapshot-94.06%25-brightgreen)](https://github.com/BULSCA/bulsca-frontend/actions/runs/40870149977)
 
 Vue 3, Vite and TypeScript public website. The separate member/management portal is linked from account and management URLs.
 
@@ -15,7 +15,21 @@ The public site connects clubs, volunteers and competitors with news, competitio
 
 The live CI badge follows `release/public-site-v1` and includes unit/component, type/lint, browser, real API integration and container configuration checks. For an unmerged PR, open its **Checks** tab to inspect that candidate's coverage.
 
-Open the latest successful run using either badge. Its **Frontend checks** summary shows measured coverage by category, including API consumers, pages/routing, UI components, services/state, content/preview and application setup. Download **frontend-coverage** from that run and open `index.html` for file/line detail; LCOV, JSON and category summaries are included. Artifacts are retained for 30 days.
+<!-- coverage-snapshot:start -->
+Measured on **29 October 2026** in [CI run 40870149977](https://github.com/BULSCA/bulsca-frontend/actions/runs/40870149977) for commit [`6ee01a0`](https://github.com/BULSCA/bulsca-frontend/commit/6ee01a0f08bf9575a6ec68c3c63d057af4321878). These are snapshot percentages; the CI badge and PR Checks link to current reports.
+
+| Category | Lines | Statements | Functions | Branches |
+| --- | ---: | ---: | ---: | ---: |
+| API consumers | 94.77% | 90.21% | 96.88% | 86.61% |
+| Pages and routing | 93.15% | 92.58% | 88.55% | 90.34% |
+| UI components | 97.99% | 96.02% | 97.33% | 88.28% |
+| Services and state | 89.05% | 83.65% | 83.02% | 81.22% |
+| Content and preview | 98.41% | 96.47% | 100.00% | 80.00% |
+| Application setup | 86.49% | 85.11% | 78.57% | 86.32% |
+| **Total** | **94.06%** | **91.38%** | **91.61%** | **87.15%** |
+<!-- coverage-snapshot:end -->
+
+Each CI run publishes current category measurements in its **Frontend checks** summary. Download **frontend-coverage** from the run and open `index.html` for file/line detail; LCOV, JSON and category summaries are included. Artifacts are retained for 30 days.
 
 ```sh
 npm ci --ignore-scripts --no-audit --no-fund
