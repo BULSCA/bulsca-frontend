@@ -47,7 +47,7 @@ function check(name, passed) { checks.push({ name, pass: !!passed }); if (!passe
 async function navigate(path) {
   const previous = await evaluate('globalThis.__bulscaApiDocument').catch(() => undefined)
   await send('Page.navigate', { url: origin + path })
-  await until(`globalThis.__bulscaApiDocument && globalThis.__bulscaApiDocument!==${JSON.stringify(previous)} && location.pathname===${JSON.stringify(path.split('?')[0])} && !!document.querySelector('main h1') && !document.querySelector('main [aria-busy="true"]')`)
+  await until(`globalThis.__bulscaApiDocument && globalThis.__bulscaApiDocument!==${JSON.stringify(previous)} && location.pathname===${JSON.stringify(path.split('?')[0])} && !!document.querySelector('main h1') && !document.querySelector('main[aria-busy="true"], main [aria-busy="true"]')`)
 }
 try {
   await send('Page.enable'); await send('Runtime.enable'); await send('Network.enable')
@@ -67,7 +67,8 @@ try {
     console.log(JSON.stringify({ width, visits: visits.length }))
   }
   await navigate('/resources/view/' + manifest.resource_id)
-  await evaluate(`document.querySelector('main button').click()`)
+  await until(`!!document.querySelector('section[aria-label="Document access"] button:not(:disabled)')`)
+  await evaluate(`document.querySelector('section[aria-label="Document access"] button').click()`)
   await until(`!!document.querySelector('section[aria-label="Document access"] a')`)
   const file = await evaluate(`(async()=>{const response=await fetch(document.querySelector('section[aria-label="Document access"] a').href);return {status:response.status,body:await response.text()}})()`)
   check('Real document download', file.status === 200 && file.body.includes('isolated integration document'))
