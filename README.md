@@ -5,7 +5,7 @@
 # BULSCA public website
 
 [![Release tests](https://github.com/BULSCA/bulsca-frontend/actions/workflows/tests.yml/badge.svg?branch=release%2Fpublic-site-v1&event=push)](https://github.com/BULSCA/bulsca-frontend/actions/workflows/tests.yml?query=branch%3Arelease%2Fpublic-site-v1)
-[![Line coverage snapshot: 94.06%](https://img.shields.io/badge/line_coverage_snapshot-94.06%25-brightgreen)](https://github.com/BULSCA/bulsca-frontend/actions/runs/40870149977)
+[![Line coverage snapshot: 94.06%](docs/badges/line-coverage.svg)](https://github.com/BULSCA/bulsca-frontend/actions/runs/40870149977)
 
 Vue 3, Vite and TypeScript public website. The separate member/management portal is linked from account and management URLs.
 
