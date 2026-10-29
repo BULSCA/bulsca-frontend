@@ -38,6 +38,9 @@ describe('real public content shapes', () => {
     await wrapper.get('form').trigger('submit'); await flushPromises()
     expect(router.currentRoute.value.query).toMatchObject({ year: '2026', location: 'Pool', cas_min: '2' })
     expect(getCollection).toHaveBeenLastCalledWith('sercs', expect.any(AbortSignal), expect.objectContaining({ year: '2026', location: 'Pool', cas_min: '2' }))
+    await wrapper.get('input[name=cas_min]').setValue('0')
+    await wrapper.get('form').trigger('submit'); await flushPromises()
+    expect(router.currentRoute.value.query.cas_min).toBe('0')
   })
   it('offers casualty groups and identifies cached social results', async () => {
     vi.mocked(getCollection).mockResolvedValue({ data: [], meta: { current_page: 1, last_page: 1, total: 0 }, stale: true, filters: { groups: [{ id: 1, name: 'First aid' }] } })

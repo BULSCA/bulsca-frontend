@@ -21,7 +21,7 @@ const router = useRouter()
 const definition = computed(() => browsePages[String(route.meta.browse)]!)
 const advancedKeys = ['year', 'location', 'author', 'cas_min', 'cas_max', 'group'] as const
 const advanced = ref<Record<string, string>>({})
-const query = computed<Record<string, string>>(() => ({ ...Object.fromEntries(advancedKeys.map(key => [key, typeof route.query[key] === 'string' ? String(route.query[key]) : ''])), q: typeof route.query.q === 'string' ? route.query.q : '', tag: typeof route.query.tag === 'string' ? route.query.tag : '',
+const query = computed<Record<string, string>>(() => ({ ...Object.fromEntries(advancedKeys.map(key => [key, typeof route.query[key] === 'string' ? String(route.query[key]) : ''])), tags: typeof route.query.tags === 'string' ? route.query.tags : '', q: typeof route.query.q === 'string' ? route.query.q : '', tag: typeof route.query.tag === 'string' ? route.query.tag : '',
   page: String(Number.isSafeInteger(Number(route.query.page)) && Number(route.query.page) > 0 ? Number(route.query.page) : 1) }))
 const params = computed<Params>(() => ({ ...Object.fromEntries(Object.entries(route.params).map(([key, value]) => [key, String(value)])),
   season: String(route.params.season || 'current') }))
@@ -46,7 +46,7 @@ watch([() => `${String(route.name)}:${JSON.stringify(route.params)}`, () => JSON
   advanced.value = Object.fromEntries(advancedKeys.map(key => [key, query.value[key] || '']))
   void load()
 }, { immediate: true })
-function searchNow() { clearTimeout(timer); void router.replace({ path: route.path, query: { ...route.query, ...Object.fromEntries(Object.entries(advanced.value).map(([key, value]) => [key, value || undefined])), q: search.value || undefined, tag: tag.value || undefined, page: undefined } }) }
+function searchNow() { clearTimeout(timer); void router.replace({ path: route.path, query: { ...route.query, ...Object.fromEntries(Object.entries(advanced.value).map(([key, value]) => [key, value === '' ? undefined : String(value)])), q: search.value || undefined, tag: tag.value || undefined, page: undefined } }) }
 function debounce() { clearTimeout(timer); timer = setTimeout(searchNow, 300) }
 onBeforeUnmount(() => clearTimeout(timer))
 </script>
@@ -67,7 +67,7 @@ onBeforeUnmount(() => clearTimeout(timer))
       </template>
       <label v-if="definition.endpoint === 'casualties'">Group<select v-model="advanced.group" class="form-control" name="group"><option value="">All groups</option><option v-for="group in collection?.filters?.groups" :key="group.id" :value="String(group.id)">{{ group.name }}</option></select></label>
       <button type="submit" class="action-button">Search</button>
-      <RouterLink v-if="query.q || query.tag" :to="route.path">Clear filters</RouterLink>
+      <RouterLink v-if="query.q || query.tag || query.tags || advancedKeys.some(key => query[key])" :to="route.path">Clear filters</RouterLink>
     </form>
     <RequestError v-if="displayError" :error="displayError" :stale="!!data" :busy="loading" @retry="load" />
     <p v-if="error && collection">These are previously loaded results; they may not match your latest search.</p>

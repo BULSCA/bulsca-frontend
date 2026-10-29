@@ -1,5 +1,5 @@
 // Generated from BULSCA/bulsca-site docs/api/openapi.json. Do not edit.
-// Contract SHA-256: 62a1ef9e71e57edc94303fc9022e99fc25cd784cf9481cf7b4bf9072eb594315
+// Contract SHA-256: 5c5a7fed0ce4a83dfab7ab1299c1fea91f1208c77e745cdc9aa9b15dafb9949f
 
 export type Tag = { "id": number; "name": string; "slug": string }
 export type Article = { "id": number; "slug": string; "title": string; "author": string | null; "excerpt": string; "pinned": boolean; "created_at": string | null; "updated_at": string | null; "views": number; "thumbs_up": number; "thumbs_down": number; "tags": Array<Tag> }

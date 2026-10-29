@@ -1,4 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router'
+import type { LocationQuery } from 'vue-router'
 import { pages } from '@/content/pages'
 import { browsePages } from '@/content/browse'
 const StaticPage = () => import('@/views/StaticPageView.vue')
@@ -7,6 +8,10 @@ const PortalPage = () => import('@/views/PortalView.vue')
 const staticRoute = (path: string, name: string, content: string): RouteRecordRaw => ({ path, name, component: StaticPage, meta: { content, title: pages[content]!.title } })
 const browseRoute = (path: string, name: string, browse: string): RouteRecordRaw => ({ path, name, component: browse === 'member' ? () => import('@/views/CommitteeMemberView.vue') : BrowsePage, meta: { browse, title: browsePages[browse]!.title } })
 const handoff = (path: string, name: string): RouteRecordRaw => ({ path, name, component: PortalPage, meta: { title: 'Member and management portal' } })
+function legacyTrainingQuery(query: LocationQuery) {
+  const { search, when, where, ...rest } = query
+  return { ...rest, q: rest.q || search, year: rest.year || (when === 'all' ? undefined : when), location: rest.location || (where === 'all' ? undefined : where), group: rest.group === 'all' ? undefined : rest.group }
+}
 export const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: () => import('@/views/HomeView.vue'), meta: { title: pages.home!.title } }, staticRoute('/about', 'about', 'about'),
   { path: '/about/records', name: 'records', component: () => import('@/views/RecordsView.vue'), meta: { title: 'BULSCA records' } },
@@ -29,8 +34,8 @@ export const routes: RouteRecordRaw[] = [
   { path: '/resources/search/:search', redirect: to => ({ path: '/resources/search', query: { ...to.query, q: String(to.params.search) } }) },
   browseRoute('/resources/sercs', 'sercs', 'sercs'), browseRoute('/resources/sercs/:slug', 'serc', 'serc'),
   browseRoute('/resources/casualties', 'casualties', 'casualties'), browseRoute('/resources/casualties/:slug', 'casualty', 'casualty'),
-  { path: '/resources/sercs/search', redirect: to => ({ path: '/resources/sercs', query: to.query }) },
-  { path: '/resources/casualties/search', redirect: to => ({ path: '/resources/casualties', query: to.query }) },
+  { path: '/resources/sercs/search', redirect: to => ({ path: '/resources/sercs', query: legacyTrainingQuery(to.query) }) },
+  { path: '/resources/casualties/search', redirect: to => ({ path: '/resources/casualties', query: legacyTrainingQuery(to.query) }) },
   browseRoute('/resources/view/:id', 'resource', 'resource'), browseRoute('/resources/:slug', 'resource-page', 'resource-page'),
   staticRoute('/welfare', 'welfare', 'welfare'), staticRoute('/welfare/support-and-reporting', 'support', 'support'),
   staticRoute('/welfare/inclusion-and-accessibility', 'inclusion', 'inclusion'), staticRoute('/contact', 'contact', 'contact'),

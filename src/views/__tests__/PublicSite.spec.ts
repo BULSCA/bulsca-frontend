@@ -157,6 +157,12 @@ describe('complete public browsing in preview mode', () => {
     expect(app.get(`a[href="https://portal.bulsca.co.uk${path}"]`).text()).toContain('Open the portal')
   })
 
+  it('preserves filters in legacy SERC search URLs', async () => {
+    const { router } = await visit('/resources/sercs/search?search=pool&when=2026&where=Pool&tags=1')
+    expect(router.currentRoute.value.path).toBe('/resources/sercs')
+    expect(router.currentRoute.value.query).toMatchObject({ q: 'pool', year: '2026', location: 'Pool', tags: '1' })
+  })
+
   it('keeps genuinely unknown routes distinct from unavailable content', async () => {
     const { router, app } = await visit('/this-page-does-not-exist')
     expect(router.currentRoute.value.name).toBe('not-found')
