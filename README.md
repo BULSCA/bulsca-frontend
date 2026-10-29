@@ -1,6 +1,28 @@
-# BULSCA public frontend
+<p align="center">
+  <a href="https://www.bulsca.co.uk"><img src="src/assets/blogo.png" width="180" alt="BULSCA logo"></a>
+</p>
+
+# BULSCA public website
+
+[![Release tests](https://github.com/BULSCA/bulsca-frontend/actions/workflows/tests.yml/badge.svg?branch=release%2Fpublic-site-v1&event=push)](https://github.com/BULSCA/bulsca-frontend/actions/workflows/tests.yml?query=branch%3Arelease%2Fpublic-site-v1)
+[![Coverage reports](https://img.shields.io/badge/coverage-reports-blue)](https://github.com/BULSCA/bulsca-frontend/actions/workflows/tests.yml?query=branch%3Arelease%2Fpublic-site-v1)
 
 Vue 3, Vite and TypeScript public website. The separate member/management portal is linked from account and management URLs.
+
+The public site connects clubs, volunteers and competitors with news, competitions, results and lifesaving resources. Shared Vue layouts keep browsing consistent, and unavailable backend services leave pages usable with clear recovery messages.
+
+## Tests and coverage
+
+The live CI badge follows `release/public-site-v1` and includes unit/component, type/lint, browser, real API integration and container configuration checks. For an unmerged PR, open its **Checks** tab to inspect that candidate's coverage.
+
+Open the latest successful run using either badge. Its **Frontend checks** summary shows measured coverage by category, including API consumers, pages/routing, UI components, services/state, content/preview and application setup. Download **frontend-coverage** from that run and open `index.html` for file/line detail; LCOV, JSON and category summaries are included. Artifacts are retained for 30 days.
+
+```sh
+npm ci --ignore-scripts --no-audit --no-fund
+npm run test:coverage
+```
+
+Local reports are written to ignored `coverage/`. V8 measures lines, statements, functions and branches across executable `src/` code, including untested files. Tests, generated API types and type-only declarations are excluded. Categories group source files; separately reported browser/API acceptance results are not added to these percentages. Missing or invalid reports fail CI; coverage measurement is required without a minimum-percentage gate.
 
 ## Browse without backend services
 
@@ -176,3 +198,16 @@ Before deployment, the owner should check real data, media/download URLs, captch
 The backend repository's `compose.yml` coordinates both sibling checkouts, PHP/web, MySQL 8.4, shared storage and the scheduler. Its README contains configuration, explicit build/import commands, backups, proxy setup, smoke acceptance, reboot recovery and rollback. Use `www.bulsca.co.uk` for Vue, `api.bulsca.co.uk` for public API/media/downloads and `portal.bulsca.co.uk` for the existing Laravel administration. Set runtime `PUBLIC_API_HOST` for the frontend proxy; it resolves the backend using Podman's network DNS when requests arrive, allowing the static site to start during backend downtime. It strips browser authentication/cookies, does not cache or retry API requests, preserves status/request IDs and never substitutes Vue HTML for API responses or missing assets.
 
 CI additionally requires `Container configuration`: checksum-pinned Hadolint, shell/Compose checks, 25 real Nginx HTTP routing scenarios with temporary fixtures, and smoke-tool unit tests. The backend checker runs against this PR's frontend and a pinned backend commit. These checks build no application assets/images. Owner acceptance of built containers, real data and providers is still required before release.
+
+## Acknowledgments
+
+This frontend continues the work of the people who have cared for BULSCA's website:
+
+- **[James O'Donohoe](https://github.com/jaykay351)** — ongoing website maintenance and modernisation, including the Vue frontend and API separation.
+- **Noah Hollowell** — previous maintainer. Thank you for the time, care and development work invested in the original BULSCA website, which this project builds on.
+
+Thank you also to BULSCA's volunteers and contributors for keeping the site's information and resources useful to the university lifesaving community.
+
+### Open source acknowledgments
+
+Built with [Vue](https://vuejs.org/), [Vite](https://vite.dev/), TypeScript and other open source tools. The companion API and existing administration use [Laravel](https://laravel.com/), created by Taylor Otwell and maintained by its contributors. Framework and dependency copyright/licence notices remain with their respective packages; the Laravel notice is also retained in the backend repository.
