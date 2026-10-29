@@ -19,7 +19,7 @@ server {
     }
 
     # Resolve at request time so Vue can start while the backend is unavailable.
-    location ~ ^/(api(?:/|$)|img/|storage/|resources/view/[0-9]+$) {
+    location ~ "^/(api(?:/|$)|img/|storage/|resources/view/(?:[0-9]+|[a-fA-F0-9-]{36})$)" {
         proxy_pass $backend;
         proxy_set_header Host ${PUBLIC_API_HOST};
         proxy_set_header X-Forwarded-Host ${PUBLIC_API_HOST};
