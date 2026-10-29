@@ -68,7 +68,7 @@ jobs:
         working-directory: frontend
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:8.4
         env:
           MYSQL_ROOT_PASSWORD: testing
           MYSQL_DATABASE: bulsca_integration_test
@@ -101,7 +101,7 @@ jobs:
         with:
           repository: BULSCA/bulsca-site
           # Paired public contract revision; update deliberately with coordinated API changes.
-          ref: 8ca6a90997a819ad4a7d8e69c98062197f1bb1ae
+          ref: 8c608cbe53c3766f8acb12b21cc41e2de653def5
           path: backend
           persist-credentials: false
       - uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc
@@ -131,10 +131,40 @@ jobs:
           include-hidden-files: true
           if-no-files-found: warn
           retention-days: 7
+  container-checks:
+    name: Container configuration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: bulsca-site
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          path: bulsca-frontend
+          persist-credentials: false
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          repository: BULSCA/bulsca-site
+          ref: 8c608cbe53c3766f8acb12b21cc41e2de653def5
+          path: bulsca-site
+          persist-credentials: false
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: '24'
+      - name: Install configuration check tools without building images
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends nginx shellcheck podman python3-yaml python3-venv
+          python3 -m venv "$RUNNER_TEMP/compose-tools"
+          "$RUNNER_TEMP/compose-tools/bin/pip" install podman-compose==1.5.0
+          echo "$RUNNER_TEMP/compose-tools/bin" >> "$GITHUB_PATH"
+      - name: Validate Containerfiles, shell scripts, Compose and Nginx routing
+        run: bash containers/check.sh
   required:
     name: Required CI
     if: ${{ always() }}
-    needs: [frontend-checks, frontend-browser, public-api-integration]
+    needs: [frontend-checks, frontend-browser, public-api-integration, container-checks]
     runs-on: ubuntu-24.04
     timeout-minutes: 2
     steps:
