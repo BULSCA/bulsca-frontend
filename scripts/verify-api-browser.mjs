@@ -45,13 +45,14 @@ async function until(expression) {
 }
 function check(name, passed) { checks.push({ name, pass: !!passed }); if (!passed) throw Error(name) }
 async function navigate(path) {
+  const previous = await evaluate('globalThis.__bulscaApiDocument').catch(() => undefined)
   await send('Page.navigate', { url: origin + path })
-  await until(`location.pathname===${JSON.stringify(path.split('?')[0])} && !!document.querySelector('main h1') && !document.querySelector('main [aria-busy="true"]')`)
+  await until(`globalThis.__bulscaApiDocument && globalThis.__bulscaApiDocument!==${JSON.stringify(previous)} && location.pathname===${JSON.stringify(path.split('?')[0])} && !!document.querySelector('main h1') && !document.querySelector('main [aria-busy="true"]')`)
 }
 try {
   await send('Page.enable'); await send('Runtime.enable'); await send('Network.enable')
   await send('Fetch.enable', { patterns: [{ urlPattern: 'https://*' }] })
-  await send('Page.addScriptToEvaluateOnNewDocument', { source: `window.turnstile={render:(_element,options)=>{queueMicrotask(()=>options.callback('integration-token'));return 'test-widget'},remove:()=>{}}` })
+  await send('Page.addScriptToEvaluateOnNewDocument', { source: `globalThis.__bulscaApiDocument=crypto.randomUUID();window.turnstile={render:(_element,options)=>{queueMicrotask(()=>options.callback('integration-token'));return 'test-widget'},remove:()=>{}}` })
   const staticPaths = ['/about', '/about/records', '/freshers', '/get-involved', '/get-involved/clubs/create', '/competitions', '/resources/forms', '/welfare', '/welfare/support-and-reporting', '/welfare/inclusion-and-accessibility', '/contact', '/privacy-policy', '/data-deletion', '/cookies', '/terms-of-service', '/meta-content/feed']
   for (const width of [320, 375, 640, 768, 1024, 1440]) {
     await send('Emulation.setDeviceMetricsOverride', { width, height: 900, deviceScaleFactor: 1, mobile: width < 768 })
@@ -76,7 +77,7 @@ try {
   await until(`document.querySelector('.article-actions').innerText.includes('Thank you')`)
   check('Real article rating', await evaluate(`document.querySelector('.article-actions').innerText.includes('Helpful (1)')`))
   await navigate('/contact-form')
-  await until(`!!document.querySelector('form button:not(:disabled)')`)
+  await until(`!!document.querySelector('main .contact-form button[type="submit"]:not(:disabled)')`)
   await evaluate(`(()=>{for(const [name,value] of Object.entries({name:'Integration Visitor',email:'visitor@example.test',subject:'Integration test',message:'Local test only'})){const el=document.querySelector('main #'+name);el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}))}const form=document.querySelector('main form');form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}))})()`)
   await until(`!!document.querySelector('main .success-message')`)
   check('Real contact endpoint with fake external providers', true)
