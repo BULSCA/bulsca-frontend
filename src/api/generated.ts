@@ -1,5 +1,5 @@
 // Generated from BULSCA/bulsca-site docs/api/openapi.json. Do not edit.
-// Contract SHA-256: 5c5a7fed0ce4a83dfab7ab1299c1fea91f1208c77e745cdc9aa9b15dafb9949f
+// Contract SHA-256: 3495d4095acc01bcc859240d68316767dea7fe1704e93cfb93c44e11ca194b38
 
 export type Tag = { "id": number; "name": string; "slug": string }
 export type Article = { "id": number; "slug": string; "title": string; "author": string | null; "excerpt": string; "pinned": boolean; "created_at": string | null; "updated_at": string | null; "views": number; "thumbs_up": number; "thumbs_down": number; "tags": Array<Tag> }
@@ -27,3 +27,5 @@ export type ArticleCounters = { "views": number; "thumbs_up": number; "thumbs_do
 export type ArticleInteractionResponse = { "data": ArticleCounters }
 export type ArticleViewEvent = { "event_id": string }
 export type ArticleRatingEvent = { "event_id": string; "type": "up" | "down" }
+export type ManifestRoute = { "url": string; "kind": string; "title": string }
+export type ManifestResponse = { "data": { "revision": number; "routes": Array<ManifestRoute> } }
